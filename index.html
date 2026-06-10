@@ -1567,7 +1567,8 @@ function renderModuleQ(idx) {
     return '<button class="' + cls + '" onclick="renderModuleQ(' + di + ')">' + (di+1) + '</button>';
   }).join('');
 
-  document.getElementById('q-card').innerHTML =
+  const qCard = document.getElementById('q-card');
+  qCard.innerHTML =
     '<div class="q-badge">' + SEC_ICON[key] + ' ' + SEC_NAME[key] +
     ' <span style="opacity:.35;margin:0 3px">·</span> ' + modLbl + '</div>' +
     passage +
@@ -1578,6 +1579,7 @@ function renderModuleQ(idx) {
       '<div class="q-dots">' + dots + '</div>' +
       '<button class="nav-btn"' + (idx===S.moduleQs.length-1?' disabled':'') + ' onclick="renderModuleQ(' + (idx+1) + ')">Next →</button>' +
     '</div>';
+  if (S.passageBlockMode) qCard.scrollTop = 0;
 }
 
 function answerQ(optIdx) {
