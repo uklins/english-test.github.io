@@ -327,6 +327,7 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
 #test-passage-panel{flex:0 0 50%;min-width:0;overflow-y:auto;padding:1.8rem 1.5rem 2rem 2rem;border-right:1px solid var(--border-light)}
 .passage-panel-label{font-size:.65rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--accent-dark);margin-bottom:.75rem}
 .passage-panel-text{font-size:.895rem;line-height:1.95;color:var(--ink-mid);white-space:pre-wrap}
+.word-highlight{background:#FFF176;border-radius:3px;padding:0 2px;font-weight:600;color:var(--ink)}
 .test-body.with-passage #q-card{flex:0 0 50%;min-width:0;max-width:none;overflow-y:auto;padding:1.8rem 1.5rem 2rem}
 @media(max-width:720px){
   #screen-test.passage-mode{height:auto;overflow:visible}
@@ -814,7 +815,7 @@ const QB_A2 = {
       {id:'a2vh1',q:'To be "sanguine" about an outcome means feeling:',opts:['Deeply anxious and uncertain','Optimistic, especially in a difficult situation','Morally ambivalent about the decision','Bitterly resentful of the result'],a:1,exp:'"Sanguine" from the humoral theory (blood = optimism) — confidently optimistic, especially when others are not.'},
       {id:'a2vh2',q:'A "laconic" reply is best characterized as:',opts:['Warmly polite and elaborate','Brief and using very few words','Technically precise but overly long','Deliberately evasive and indirect'],a:1,exp:'"Laconic" from the Spartans of Laconia, famed for brevity — using minimal words to express much.'},
       {id:'a2vh3',q:'To "obfuscate" an issue means to:',opts:['Clarify it for a general audience','Resolve it through negotiation','Make it unnecessarily unclear or confusing','Publicize it through official channels'],a:2,exp:'"Obfuscate" from Latin obfuscare (to darken) — to render something obscure or hard to understand.'},
-      {id:'a2vh4',q:'"Mendacious" behavior is behavior that is:',opts:['Habitually dishonest and untruthful','Exceptionally disciplined and precise','Reluctant but ultimately compliant','Aggressively and overtly ambitious'],a:0,exp:'"Mendacious" from Latin mendax — inclined to lie; not telling the truth.'},
+      {id:'a2vh4',q:'To "equivocate" means to:',opts:['Use deliberately vague language to avoid commitment','Speak with unusual directness and clarity','Make a firm and unambiguous statement','Repeat one\'s position without variation'],a:0,exp:'"Equivocate" from Latin aequivocus (ambiguous) — to use unclear or ambiguous language, typically to mislead or evade.'},
       {id:'a2vh5',q:'To "exacerbate" a problem means to:',opts:['Solve it through careful analysis','Make it more severe or intense','Expose it to public scrutiny','Temporarily suppress its effects'],a:1,exp:'"Exacerbate" from Latin exacerbare (to irritate) — to make an existing problem worse.'},
     ],
   },
@@ -978,7 +979,7 @@ const QB_A4 = {
       {id:'a4vm1',q:'"Perfidious" behavior is behavior that is:',opts:['Extremely cautious and careful','Marked by deliberate treachery or betrayal','Overly formal and ceremonious','Unexpectedly and unusually generous'],a:1,exp:'"Perfidious" from Latin perfidia (faithlessness) — guilty of betrayal or treachery.'},
       {id:'a4vm2',q:'To "enervate" someone means to:',opts:['Inspire them to greater effort','Deprive them of energy and vitality','Provide them with critical information','Challenge them intellectually'],a:1,exp:'"Enervate" from Latin enervare (to remove the sinews) — to weaken or drain of energy.'},
       {id:'a4vm3',q:'"Cogent" reasoning is reasoning that is:',opts:['Difficult to follow without specialized knowledge','Clear, logical, and convincingly presented','Based on questionable assumptions','Overly technical for a general audience'],a:1,exp:'"Cogent" from Latin cogere (to drive together) — powerfully convincing by virtue of clear logic.'},
-      {id:'a4vm4',q:'To "impugn" someone\'s motives means to:',opts:['Praise them publicly and sincerely','Challenge or call into question their integrity','Understand their perspective sympathetically','Investigate their actions through formal channels'],a:1,exp:'"Impugn" from Latin impugnare (to attack) — to dispute or call into question someone\'s honesty.'},
+      {id:'a4vm4',q:'Someone described as "adamant" is:',opts:['Open-minded and willing to reconsider','Firmly and stubbornly refusing to change their position','Generally agreeable and easy to persuade','Slow to form opinions on complex matters'],a:1,exp:'"Adamant" from Greek adamas (unbreakable) — resolutely refusing to change one\'s mind or position.'},
       {id:'a4vm5',q:'"Hegemony" refers to:',opts:['A formal written agreement between states','Leadership or dominance, especially of one country over others','A system of proportional political representation','The philosophical study of political power structures'],a:1,exp:'"Hegemony" from Greek hegemonia — leadership or dominance, typically of one country or group over others.'},
     ],
     m2easy:[
@@ -1385,7 +1386,7 @@ const LVL_DISP = [
 ];
 const MOD_TIME = {
   vocab:{1:150,2:150}, grammar:{1:150,2:150},
-  reading:{1:240,2:240}, writing:{1:150,2:600},
+  reading:{1:240,2:300}, writing:{1:150,2:600},
 };
 
 // ─── STATE ────────────────────────────────────────────────────
@@ -1404,7 +1405,7 @@ function initState() {
     writingText:'', writingScore:null,
     writingPrompt:null,
     writingOnly:false, writingSkipped:false,
-    passageBlockMode:false,
+    passageBlockMode:false, passageText:'',
     used:new Set(),
     moduleQs:[], userAnswers:[], qIdx:0, modSecs:0,
   };
@@ -1544,6 +1545,23 @@ function loadModule() {
   S.qIdx = 0;
 }
 
+function extractContextWord(qText) {
+  if (!/In the passage|As used in|as used in/.test(qText)) return null;
+  const m = qText.match(/"([^"]+)"/);
+  return m ? m[1] : null;
+}
+
+function applyPassageHighlight(word) {
+  const el = document.getElementById('passage-panel-text');
+  if (!el || !S.passageText) return;
+  if (!word) { el.textContent = S.passageText; return; }
+  const escaped = S.passageText
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const safe = word.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  el.innerHTML = escaped.replace(new RegExp(safe,'i'),
+    '<mark class="word-highlight">$&</mark>');
+}
+
 function renderModuleQ(idx) {
   if (idx < 0 || idx >= S.moduleQs.length) return;
   S.qIdx = idx;
@@ -1551,6 +1569,8 @@ function renderModuleQ(idx) {
   const key = SECS[S.secIdx];
   const modLbl = S.module === 1 ? 'M1' : (S.m2Hard[S.secIdx] ? 'M2 · Advanced' : 'M2 · Foundation');
   document.getElementById('q-counter').textContent = 'Question ' + (idx + 1) + '/' + S.moduleQs.length;
+
+  if (S.passageBlockMode) applyPassageHighlight(extractContextWord(q.q));
 
   const letters = ['A','B','C','D'];
   const ua = S.userAnswers[idx];
@@ -1829,7 +1849,7 @@ function showSectionIntro() {
   const isReadingPassageBlock = key === 'reading' && S.examGroup === 'A';
   const m2name = isReadingPassageBlock ? 'Module 2 — Full Passage' : 'Module 2';
   const m2meta = isReadingPassageBlock
-    ? '1 full passage · 5 questions · Advanced: ~420 words · Foundation: ~300 words'
+    ? '1 full passage · 5 questions'
     : '5 questions · difficulty based on M1 score';
   const qtypes = isReadingPassageBlock
     ? 'M1: Five short passages with one question each. M2: One full academic passage with five questions — testing main idea, detail retrieval, inference, vocabulary in context, and author\'s purpose. Read the passage carefully before answering.'
@@ -1932,6 +1952,7 @@ function startModule2() {
 function showPassageBlock() {
   const tier = S.m2Hard[S.secIdx] ? 'm2hard' : 'm2easy';
   const qData = getQB()[SECS[S.secIdx]][tier];
+  S.passageText = qData.passage;
   document.getElementById('passage-panel-text').textContent = qData.passage;
   const panel = document.getElementById('test-passage-panel');
   if (panel) panel.style.display = '';
