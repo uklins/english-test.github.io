@@ -275,7 +275,8 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
 /* PRETEST SCREEN */
 #screen-pretest{align-items:center;justify-content:center;padding:2rem}
 .pretest-card{max-width:440px;width:100%;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:2.4rem 2.2rem;box-shadow:var(--shadow-lg)}
-.pt-brand{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:var(--ink);text-align:center;margin-bottom:1.6rem;letter-spacing:.06em}
+.pt-brand{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:var(--ink);text-align:center;letter-spacing:.06em}
+.pt-brand em{color:var(--accent);font-style:normal}
 .pt-section{margin-bottom:1.1rem;padding-bottom:1.1rem;border-bottom:1px solid var(--border-light)}
 .pt-section:last-of-type{border-bottom:none;margin-bottom:0;padding-bottom:0}
 .pt-title{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.55rem}
@@ -284,7 +285,7 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
 .pt-credit{text-align:center;font-size:.72rem;color:var(--ink-muted);margin-top:.9rem;letter-spacing:.04em}
 .pt-sec-row{display:flex;gap:1rem;padding:.45rem 0;border-bottom:1px solid var(--border-light)}
 .pt-sec-row:last-child{border-bottom:none}
-.pt-sec-name{font-weight:700;font-size:.86rem;color:var(--ink);min-width:82px;flex-shrink:0;padding-top:.05rem}
+.pt-sec-name{font-weight:700;font-size:.86rem;color:var(--ink);width:108px;flex-shrink:0;padding-top:.05rem}
 .pt-sec-modules{font-size:.82rem;color:var(--ink);display:flex;flex-direction:column;gap:.18rem}
 .pt-ctrl-preview{display:flex;justify-content:flex-end;gap:.5rem;background:var(--border-light);border:1px solid var(--border);border-radius:8px;padding:.45rem .7rem;margin:.5rem 0 .45rem}
 .pt-ctrl-desc{display:flex;flex-direction:column;gap:.18rem;font-size:.79rem;color:var(--ink-mid)}
@@ -411,9 +412,9 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
   <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:2rem">
     <div class="pretest-card">
       <div style="text-align:center;margin-bottom:1.8rem">
-        <div class="pt-brand">LEXIS</div>
-        <div style="font-size:.75rem;color:var(--ink-muted);margin-top:.25rem;letter-spacing:.12em;text-transform:uppercase">Adaptive English Proficiency Assessment</div>
-        <div style="font-size:.9rem;font-weight:600;color:var(--accent-dark);margin-top:.8rem">Created by 洛可薇Leachoy</div>
+        <div class="pt-brand">L<em>E</em>X<em>I</em>S</div>
+        <div style="font-size:.78rem;color:var(--ink);margin-top:.1rem;letter-spacing:.06em">Adaptive English Assessment</div>
+        <div style="font-size:.9rem;font-weight:600;color:var(--accent-dark);margin-top:.7rem">Created by 洛可薇Leachoy</div>
       </div>
       <div class="pt-section">
         <div class="pt-title">Four Sections</div>
@@ -435,6 +436,7 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
           <div class="pt-sec-name">🔍 Reading</div>
           <div class="pt-sec-modules">
             <div>Module 1: 5 passages (4 minutes)</div>
+            <div id="pretest-reading-m2">Module 2: 5 passages (6 minutes)</div>
           </div>
         </div>
         <div class="pt-sec-row">
