@@ -327,7 +327,7 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
 #test-passage-panel{flex:0 0 50%;min-width:0;overflow-y:auto;padding:1.8rem 1.5rem 2rem 2rem;border-right:1px solid var(--border-light)}
 .passage-panel-label{font-size:.65rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--accent-dark);margin-bottom:.75rem}
 .passage-panel-text{font-size:.895rem;line-height:1.95;color:var(--ink-mid);white-space:pre-wrap}
-.word-highlight{background:#FFF176;border-radius:3px;padding:0 2px;font-weight:600;color:var(--ink)}
+.word-highlight{background:#FFF176;border-radius:3px;padding:0 2px}
 .test-body.with-passage #q-card{flex:0 0 50%;min-width:0;max-width:none;overflow-y:auto;padding:1.8rem 1.5rem 2rem}
 @media(max-width:720px){
   #screen-test.passage-mode{height:auto;overflow:visible}
@@ -1386,7 +1386,7 @@ const LVL_DISP = [
 ];
 const MOD_TIME = {
   vocab:{1:150,2:150}, grammar:{1:150,2:150},
-  reading:{1:240,2:300}, writing:{1:150,2:600},
+  reading:{1:240,2:360}, writing:{1:150,2:600},
 };
 
 // ─── STATE ────────────────────────────────────────────────────
@@ -1752,7 +1752,7 @@ const SEC_INTRO_DATA = {
   reading:{
     qtypes:'Short academic passages (50–120 words) with one question each. Tests main idea, inference, author\'s purpose, and detail retrieval.',
     tip:'Skim the passage once for structure, then read the question before returning for the answer.',
-    m1time:'4:00',m2time:'4:00',
+    m1time:'4:00',m2time:'6:00',
   },
 };
 
@@ -1765,8 +1765,8 @@ function startTest() {
   if (S.examGroup === 'A') S.qbIndex = Math.floor(Math.random() * QB_A_BANKS.length);
   const rm2el = document.getElementById('pretest-reading-m2');
   if (rm2el) rm2el.textContent = S.examGroup === 'A'
-    ? 'Module 2: Full passage, 5 questions (4 minutes)'
-    : 'Module 2: 5 passages (4 minutes)';
+    ? 'Module 2: Full passage, 5 questions (6 minutes)'
+    : 'Module 2: 5 passages (6 minutes)';
   show('screen-pretest');
 }
 
