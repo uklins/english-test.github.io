@@ -322,15 +322,17 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
 .src-not-tested{background:var(--border-light);border:1.5px dashed var(--border);border-radius:var(--r);padding:1.1rem 1.4rem;display:flex;align-items:center;gap:.75rem}
 
 /* READING PASSAGE PANEL (screen-test with-passage mode) */
-.test-body.with-passage{padding:0;align-items:stretch;overflow:hidden}
+#screen-test.passage-mode{height:100vh;overflow:hidden}
+.test-body.with-passage{padding:0;align-items:stretch;min-height:0;overflow:hidden}
 #test-passage-panel{flex:0 0 50%;min-width:0;overflow-y:auto;padding:1.8rem 1.5rem 2rem 2rem;border-right:1px solid var(--border-light)}
 .passage-panel-label{font-size:.65rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--accent-dark);margin-bottom:.75rem}
 .passage-panel-text{font-size:.895rem;line-height:1.95;color:var(--ink-mid);white-space:pre-wrap}
 .test-body.with-passage #q-card{flex:0 0 50%;min-width:0;max-width:none;overflow-y:auto;padding:1.8rem 1.5rem 2rem}
 @media(max-width:720px){
-  .test-body.with-passage{flex-direction:column;overflow-y:auto}
+  #screen-test.passage-mode{height:auto;overflow:visible}
+  .test-body.with-passage{flex-direction:column;overflow-y:auto;min-height:0}
   #test-passage-panel{flex:none;width:100%;border-right:none;border-bottom:1px solid var(--border-light);max-height:42vh}
-  .test-body.with-passage #q-card{flex:none;width:100%;padding:1rem 1rem 2rem}
+  .test-body.with-passage #q-card{flex:none;width:100%;padding:1rem 1rem 2rem;overflow-y:visible}
 }
 </style>
 </head>
@@ -1567,8 +1569,7 @@ function renderModuleQ(idx) {
     return '<button class="' + cls + '" onclick="renderModuleQ(' + di + ')">' + (di+1) + '</button>';
   }).join('');
 
-  const qCard = document.getElementById('q-card');
-  qCard.innerHTML =
+  document.getElementById('q-card').innerHTML =
     '<div class="q-badge">' + SEC_ICON[key] + ' ' + SEC_NAME[key] +
     ' <span style="opacity:.35;margin:0 3px">·</span> ' + modLbl + '</div>' +
     passage +
@@ -1579,7 +1580,6 @@ function renderModuleQ(idx) {
       '<div class="q-dots">' + dots + '</div>' +
       '<button class="nav-btn"' + (idx===S.moduleQs.length-1?' disabled':'') + ' onclick="renderModuleQ(' + (idx+1) + ')">Next →</button>' +
     '</div>';
-  if (S.passageBlockMode) qCard.scrollTop = 0;
 }
 
 function answerQ(optIdx) {
@@ -1937,6 +1937,7 @@ function showPassageBlock() {
   if (panel) panel.style.display = '';
   const body = document.querySelector('#screen-test .test-body');
   if (body) body.classList.add('with-passage');
+  document.getElementById('screen-test').classList.add('passage-mode');
   show('screen-test');
   updatePips();
   renderModuleQ(0);
@@ -1949,6 +1950,7 @@ function cleanupPassagePanel() {
   if (panel) panel.style.display = 'none';
   const body = document.querySelector('#screen-test .test-body');
   if (body) body.classList.remove('with-passage');
+  document.getElementById('screen-test').classList.remove('passage-mode');
 }
 
 function endSection() {
