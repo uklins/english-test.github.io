@@ -287,7 +287,9 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
 .pt-sec-row{display:flex;gap:.8rem;padding:.45rem 0;border-bottom:1px solid var(--border-light)}
 .pt-sec-row:last-child{border-bottom:none}
 .pt-sec-name{font-weight:700;font-size:.86rem;color:var(--ink);width:108px;flex-shrink:0;padding-top:.05rem}
-.pt-sec-modules{font-size:.82rem;color:var(--ink);display:flex;flex-direction:column;gap:.18rem}
+.pt-sec-modules{font-size:.82rem;color:var(--ink);display:flex;flex-direction:column;gap:.05rem}
+.pt-mod-time{font-size:.76rem;color:var(--ink-muted);margin-bottom:.4rem}
+.pt-col-right{padding-left:2rem;border-left:1px solid var(--border-light)}
 .pt-ctrl-preview{display:flex;justify-content:flex-end;gap:.5rem;background:var(--border-light);border:1px solid var(--border);border-radius:8px;padding:.45rem .7rem;margin:.5rem 0 .45rem}
 .pt-ctrl-desc{display:flex;flex-direction:column;gap:.18rem;font-size:.79rem;color:var(--ink-mid)}
 @media(max-width:640px){.pt-columns{grid-template-columns:1fr}.pretest-card{padding:1.8rem 1.4rem}}
@@ -426,35 +428,43 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
             <div class="pt-sec-row">
               <div class="pt-sec-name">📖 Vocabulary</div>
               <div class="pt-sec-modules">
-                <div>Module 1: 5 MCQs (2 min 30 s)</div>
-                <div>Module 2: 5 MCQs (2 min 30 s)</div>
+                <div>Module 1: 5 MCQs</div>
+                <div class="pt-mod-time">2 minutes, 30 seconds</div>
+                <div>Module 2: 5 MCQs</div>
+                <div class="pt-mod-time">2 minutes, 30 seconds</div>
               </div>
             </div>
             <div class="pt-sec-row">
               <div class="pt-sec-name">✏️ Grammar</div>
               <div class="pt-sec-modules">
-                <div>Module 1: 5 MCQs (2 min 30 s)</div>
-                <div>Module 2: 5 MCQs (2 min 30 s)</div>
+                <div>Module 1: 5 MCQs</div>
+                <div class="pt-mod-time">2 minutes, 30 seconds</div>
+                <div>Module 2: 5 MCQs</div>
+                <div class="pt-mod-time">2 minutes, 30 seconds</div>
               </div>
             </div>
             <div class="pt-sec-row">
               <div class="pt-sec-name">🔍 Reading</div>
               <div class="pt-sec-modules">
-                <div>Module 1: 5 passages (4 min)</div>
-                <div id="pretest-reading-m2">Module 2: 5 passages (6 min)</div>
+                <div>Module 1: 5 passages</div>
+                <div class="pt-mod-time">4 minutes</div>
+                <div id="pretest-reading-m2">Module 2: 5 passages</div>
+                <div class="pt-mod-time">6 minutes</div>
               </div>
             </div>
             <div class="pt-sec-row">
               <div class="pt-sec-name">📝 Writing</div>
               <div class="pt-sec-modules">
-                <div>Module 1: 5 MCQs (2 min 30 s)</div>
-                <div>Module 2: Essay Task (10 min)</div>
+                <div>Module 1: 5 MCQs</div>
+                <div class="pt-mod-time">2 minutes, 30 seconds</div>
+                <div>Module 2: Essay Task</div>
+                <div class="pt-mod-time">10 minutes</div>
               </div>
             </div>
           </div>
         </div>
-        <!-- RIGHT: Controls + Warning + Button -->
-        <div>
+        <!-- RIGHT: Controls + Nav preview + Warning -->
+        <div class="pt-col-right">
           <div class="pt-section">
             <div class="pt-title">Module Controls</div>
             <div class="pt-ctrl-preview">
@@ -466,13 +476,23 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
               <span><strong>Submit →</strong> — finish the current module early</span>
             </div>
           </div>
+          <div class="pt-section" style="margin-top:1.1rem">
+            <div class="pt-title">Question Navigation</div>
+            <div class="pt-ctrl-preview" style="justify-content:flex-start">
+              <button class="nav-btn" style="pointer-events:none;cursor:default">← Prev</button>
+              <button class="nav-btn" style="pointer-events:none;cursor:default">Next →</button>
+            </div>
+            <div class="pt-ctrl-desc">
+              <span><strong>← Prev / Next →</strong> — move between questions within a module</span>
+            </div>
+          </div>
           <div style="background:#FBE8E8;border:1.5px solid #D94F4F;border-radius:var(--r);padding:.85rem 1.1rem;margin-top:1.1rem">
             <div style="font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8B1F1F;margin-bottom:.3rem">⚠ Do Not Refresh</div>
             <div style="font-size:.8rem;color:#8B1F1F;line-height:1.6">Do not refresh or close this page until the test is fully complete and your results are displayed. All progress is stored in memory only — a refresh will permanently erase your answers, scores, and essay.</div>
           </div>
-          <button class="cont-btn" onclick="beginTest()" style="width:100%;margin-top:1rem">Begin Test →</button>
         </div>
       </div>
+      <button class="cont-btn" onclick="beginTest()" style="width:100%;margin-top:1.6rem">Begin Test →</button>
     </div>
   </div>
 </div>
@@ -1777,8 +1797,8 @@ function startTest() {
   if (S.examGroup === 'A') S.qbIndex = Math.floor(Math.random() * QB_A_BANKS.length);
   const rm2el = document.getElementById('pretest-reading-m2');
   if (rm2el) rm2el.textContent = S.examGroup === 'A'
-    ? 'Module 2: Full passage, 5 questions (6 minutes)'
-    : 'Module 2: 5 passages (6 minutes)';
+    ? 'Module 2: Full passage, 5 questions'
+    : 'Module 2: 5 passages';
   show('screen-pretest');
 }
 
