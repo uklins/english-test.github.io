@@ -353,7 +353,11 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
 .word-bank{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.4rem;margin-bottom:1.4rem}
 .word-bank-title{font-size:.65rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.7rem}
 .word-bank-grid{display:flex;flex-wrap:wrap;gap:.4rem}
-.word-chip{padding:.22rem .65rem;background:var(--border-light);border:1px solid var(--border);border-radius:100px;font-size:.79rem;color:var(--ink-mid)}
+.word-chip{padding:.22rem .65rem;background:var(--border-light);border:1px solid var(--border);border-radius:100px;font-size:.79rem;color:var(--ink-mid);display:inline-flex;align-items:center;gap:.3rem}
+.chip-letter{display:inline-flex;align-items:center;justify-content:center;width:1.35em;height:1.35em;background:var(--accent);color:#fff;border-radius:3px;font-size:.78em;font-weight:700;flex-shrink:0}
+.blank-input{display:inline-block;width:2.6rem;text-align:center;border:1.5px solid var(--accent);border-radius:6px;padding:.18rem .2rem;font-size:.88rem;font-family:'Sora',sans-serif;text-transform:uppercase;background:var(--accent-light);color:var(--ink);outline:none;vertical-align:middle;margin:0 2px;transition:border-color .18s}
+.blank-input:focus{border-color:var(--accent-dark);box-shadow:0 0 0 2px rgba(184,92,0,.12)}
+.blank-input.answered{background:var(--success-light);border-color:var(--success)}
 /* Paragraph Matching */
 #screen-cet-matching{flex-direction:column}
 .matching-body{flex:1;overflow:hidden;display:flex;flex-direction:column}
@@ -368,9 +372,9 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
 .match-q{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:.85rem 1rem}
 .match-q-num{font-size:.63rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.35rem}
 .match-q-text{font-size:.82rem;color:var(--ink);line-height:1.5;margin-bottom:.5rem}
-.match-select{width:100%;padding:.4rem .6rem;border:1.5px solid var(--border);border-radius:8px;background:var(--card);font-family:'Sora',sans-serif;font-size:.81rem;color:var(--ink);cursor:pointer;outline:none;transition:border-color .18s}
-.match-select.answered{border-color:var(--accent);background:var(--accent-light)}
-.match-select:focus{border-color:var(--accent-dark)}
+.match-input{display:block;width:3.2rem;text-align:center;border:1.5px solid var(--border);border-radius:8px;padding:.38rem .3rem;font-size:1rem;font-family:'Sora',sans-serif;text-transform:uppercase;background:var(--card);color:var(--ink);outline:none;font-weight:600;transition:border-color .18s;margin-top:.35rem}
+.match-input:focus{border-color:var(--accent-dark);box-shadow:0 0 0 2px rgba(184,92,0,.12)}
+.match-input.answered{border-color:var(--accent);background:var(--accent-light)}
 @media(max-width:720px){
   .matching-layout{grid-template-columns:1fr;overflow:visible}
   .matching-body{overflow:visible}
@@ -1827,9 +1831,11 @@ function renderModuleQ(idx) {
     return '<button class="' + cls + '" onclick="renderModuleQ(' + di + ')">' + (di+1) + '</button>';
   }).join('');
 
+  const badgeInner = S.cetCompLabel
+    ? S.cetCompLabel
+    : (SEC_ICON[key] + ' ' + SEC_NAME[key] + ' <span style="opacity:.35;margin:0 3px">·</span> ' + modLbl);
   document.getElementById('q-card').innerHTML =
-    '<div class="q-badge">' + SEC_ICON[key] + ' ' + SEC_NAME[key] +
-    ' <span style="opacity:.35;margin:0 3px">·</span> ' + modLbl + '</div>' +
+    '<div class="q-badge">' + badgeInner + '</div>' +
     passage +
     '<div class="q-text">' + q.q + '</div>' +
     '<div class="opts">' + opts + '</div>' +
@@ -2672,10 +2678,10 @@ function cetClearTimers() {
 function isCET() { return S.exam === 'cet4' || S.exam === 'cet6'; }
 function getCETData() { return S.exam === 'cet6' ? CET6_DATA : CET4_DATA; }
 
-function cetUpdatePips(screenId) {
+function cetUpdatePips() {
   const steps = CET_STEPS;
   const cur = S.cetStep || 0;
-  ['cet-pips-cloze','cet-pips-match','cet-pips-trans'].forEach(id => {
+  ['cet-pips-writing','cet-pips-cloze','cet-pips-match','cet-pips-trans'].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
     el.innerHTML = steps.map((_, i) =>
@@ -2787,6 +2793,25 @@ function showCETWriting() {
   if (inlineSkipBtn) inlineSkipBtn.textContent = 'Skip Writing';
   const reduceBtn = document.getElementById('reduce-timer-btn');
   if (reduceBtn) reduceBtn.style.display = 'none';
+  // Inject CET step pips into writing header
+  const secPips = document.querySelector('#screen-writing-task .sec-pips');
+  if (secPips && !document.getElementById('cet-pips-writing')) {
+    secPips.innerHTML = '<div class="cet-step-bar" id="cet-pips-writing" style="padding:0"></div>';
+  }
+  // Replace header label
+  const writingQCounter = document.querySelector('#screen-writing-task .q-counter');
+  if (writingQCounter) writingQCounter.textContent = 'Writing';
+  // Inject section chip above prompt box (once)
+  const writingWrap = document.querySelector('#screen-writing-task .writing-wrap');
+  if (writingWrap && !document.getElementById('cet-writing-badge')) {
+    const chip = document.createElement('div');
+    chip.id = 'cet-writing-badge';
+    chip.className = 'q-badge';
+    chip.style.marginBottom = '1.2rem';
+    chip.innerHTML = '✏️ Writing';
+    writingWrap.insertBefore(chip, writingWrap.firstChild);
+  }
+  cetUpdatePips();
   show('screen-writing-task');
   clearInterval(essayTimerInterval);
   essayTimerInterval = setInterval(() => {
@@ -2880,16 +2905,22 @@ function showCETCloze() {
   const d = getCETData();
   const c = d.cloze;
   cetClozeAnswers = new Array(10).fill(null);
-  // Render word bank
+  const BANK_LETTERS = 'ABCDEFGHIJKLMNO';
+  // Build letter→word map (store globally for input handler)
+  window._cetClozeLetterMap = {};
+  c.wordBank.forEach((w, i) => { window._cetClozeLetterMap[BANK_LETTERS[i]] = w; });
+  // Render word bank with letter badges
   const bankEl = document.getElementById('cloze-word-bank');
-  bankEl.innerHTML = c.wordBank.map(w => '<span class="word-chip">' + w + '</span>').join('');
-  // Render passage with dropdowns
+  bankEl.innerHTML = c.wordBank.map((w, i) =>
+    '<span class="word-chip"><span class="chip-letter">' + BANK_LETTERS[i] + '</span>' + w + '</span>'
+  ).join('');
+  // Update word bank instruction
+  const bankTitle = document.querySelector('.word-bank-title');
+  if (bankTitle) bankTitle.textContent = 'Word Bank — type the letter into each blank (each word used at most once)';
+  // Render passage with letter text inputs
   let passageHtml = c.passage.replace(/\[(\d+)\]/g, (match, num) => {
     const idx = parseInt(num) - 26;
-    const options = ['<option value="">— select —</option>']
-      .concat(c.wordBank.map(w => '<option value="' + w + '">' + w + '</option>'))
-      .join('');
-    return '<select class="blank-select" data-idx="' + idx + '" onchange="cetClozeSelect(this)">' + options + '</select>';
+    return '<input class="blank-input" type="text" maxlength="1" placeholder="?" data-idx="' + idx + '" oninput="cetClozeInput(this)" />';
   }).replace(/\n/g, '<br><br>');
   document.getElementById('cloze-passage').innerHTML = passageHtml;
   // Timer: 15 min
@@ -2904,10 +2935,13 @@ function showCETCloze() {
   show('screen-cet-cloze');
 }
 
-function cetClozeSelect(sel) {
-  const idx = parseInt(sel.dataset.idx);
-  cetClozeAnswers[idx] = sel.value || null;
-  sel.classList.toggle('answered', !!sel.value);
+function cetClozeInput(el) {
+  const idx = parseInt(el.dataset.idx);
+  const letter = el.value.trim().toUpperCase();
+  el.value = letter;
+  const word = (window._cetClozeLetterMap && letter) ? (window._cetClozeLetterMap[letter] || null) : null;
+  cetClozeAnswers[idx] = word;
+  el.classList.toggle('answered', !!word);
 }
 
 function cetUpdateClozeTimer() {
@@ -2946,13 +2980,10 @@ function showCETMatching() {
   const qEl = document.getElementById('matching-questions');
   const submitBtn = '<button class="submit-mod-btn" onclick="submitMatching()" style="margin-top:.5rem">Submit Section B →</button>';
   qEl.innerHTML = m.statements.map((st, i) => {
-    const opts = ['<option value="">— select paragraph —</option>']
-      .concat(paraIds.map(id => '<option value="' + id + '">' + id + '</option>'))
-      .join('');
     return '<div class="match-q">' +
       '<div class="match-q-num">Statement ' + st.num + '</div>' +
       '<div class="match-q-text">' + escHtml(st.text) + '</div>' +
-      '<select class="match-select" data-idx="' + i + '" onchange="cetMatchSelect(this)">' + opts + '</select>' +
+      '<input class="match-input" type="text" maxlength="1" placeholder="?" data-idx="' + i + '" oninput="cetMatchInput(this)" />' +
     '</div>';
   }).join('') + submitBtn;
   // Timer: 20 min
@@ -2971,10 +3002,12 @@ function escHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function cetMatchSelect(sel) {
-  const idx = parseInt(sel.dataset.idx);
-  cetMatchAnswers[idx] = sel.value || null;
-  sel.classList.toggle('answered', !!sel.value);
+function cetMatchInput(el) {
+  const idx = parseInt(el.dataset.idx);
+  const letter = el.value.trim().toUpperCase();
+  el.value = letter;
+  cetMatchAnswers[idx] = letter || null;
+  el.classList.toggle('answered', !!letter);
 }
 
 function cetUpdateMatchTimer() {
@@ -3014,9 +3047,9 @@ function showCETComp(passageIdx) {
   S.moduleQs = p.questions.map((q, i) => ({id:'cetc' + passageIdx + '_' + i, q:q.q, opts:q.opts, a:q.a, exp:''}));
   S.userAnswers = [...answers];
   S.qIdx = 0;
+  S.cetCompLabel = '📚 Reading 3 / 3 &nbsp;·&nbsp; Passage ' + (passageIdx + 1);
   // Timer: 10 min per passage
   S.modSecs = 600;
-  const key = passageIdx === 0 ? 'comp1' : 'comp2';
   // Override mod-timer display
   document.getElementById('q-counter').textContent = p.title;
   renderModuleQ(0);
@@ -3036,6 +3069,7 @@ function showCETComp(passageIdx) {
 
 function submitCETComp() {
   clearInterval(modTimerInterval);
+  S.cetCompLabel = null;
   const d = getCETData();
   const p = d.comprehension[cetCompIdx];
   let correct = 0;
@@ -3045,7 +3079,7 @@ function submitCETComp() {
   });
   cetScores['comp' + (cetCompIdx + 1)] = correct;
   cleanupPassagePanel();
-  const label = 'Reading · Section C · Passage ' + (cetCompIdx + 1);
+  const label = 'Reading 3 / 3 · Passage ' + (cetCompIdx + 1);
   showCETSectionEnd(label, 'Passage Comprehension', correct, 5, cetNextStep);
 }
 
@@ -3259,7 +3293,7 @@ S = initState();
   </div>
   <div class="cloze-body">
     <div class="cloze-wrap">
-      <div class="q-badge" style="margin-bottom:1.2rem">📖 Reading · Part III Section A &nbsp;·&nbsp; Cloze</div>
+      <div class="q-badge" style="margin-bottom:1.2rem">📖 Reading 1 / 3 &nbsp;·&nbsp; Cloze</div>
       <div class="word-bank">
         <div class="word-bank-title">Word Bank — select one word per blank (each word used at most once)</div>
         <div class="word-bank-grid" id="cloze-word-bank"></div>
@@ -3281,7 +3315,7 @@ S = initState();
     <button class="submit-mod-hdr" onclick="submitMatching()">Submit →</button>
   </div>
   <div class="matching-body">
-    <div class="q-badge" style="margin:1rem 1.5rem .5rem;align-self:flex-start">🔍 Reading · Part III Section B &nbsp;·&nbsp; Paragraph Matching</div>
+    <div class="q-badge" style="margin:1rem 1.5rem .5rem;align-self:flex-start">🔍 Reading 2 / 3 &nbsp;·&nbsp; Paragraph Matching</div>
     <div class="matching-layout">
       <div class="matching-article">
         <div class="matching-article-label">Article — identify the paragraph each statement refers to</div>
@@ -3300,20 +3334,19 @@ S = initState();
     <div class="hdr-brand">L<em>E</em>X<em>I</em>S</div>
     <div style="display:flex;align-items:center;gap:.7rem">
       <div class="cet-step-bar" id="cet-pips-trans" style="padding:0"></div>
-      <div class="writing-timer" id="translation-timer">30:00</div>
     </div>
     <button class="skip-btn" onclick="skipTranslation()">Skip</button>
   </div>
   <div class="writing-body">
     <div class="writing-wrap">
-      <div class="q-badge" style="margin-bottom:1.2rem">🌐 Part IV · Translation</div>
+      <div class="q-badge" style="margin-bottom:1.2rem">🌐 Translation</div>
       <div class="writing-prompt-box">
         <div class="writing-prompt-label">Source Text (Translate from Chinese into English)</div>
         <div class="writing-prompt-text" id="trans-source" style="font-size:1rem;line-height:1.75;font-family:'Sora',sans-serif"></div>
         <div class="writing-prompt-target">Write a complete English translation. You have 30 minutes.</div>
       </div>
       <div class="writing-meta-bar">
-        <div class="writing-timer" id="trans-timer-inline" style="font-size:1.2rem;display:none"></div>
+        <span class="writing-timer" id="translation-timer">30:00</span>
         <div class="writing-wc" id="trans-wc">0 words</div>
       </div>
       <textarea id="trans-area" style="width:100%;min-height:200px;padding:1rem 1.2rem;border:1.5px solid var(--border);border-radius:var(--r);background:var(--card);font-family:'Sora',sans-serif;font-size:.9rem;line-height:1.75;color:var(--ink);resize:vertical;transition:border-color .2s;margin-bottom:1rem;display:block" placeholder="Write your English translation here..." oninput="updateTransWC()"></textarea>
