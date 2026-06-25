@@ -391,6 +391,31 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
 .match-review-item{display:flex;justify-content:space-between;align-items:center;padding:.5rem .8rem;background:var(--card);border:1px solid var(--border);border-radius:8px;font-size:.82rem;gap:.5rem}
 .match-review-item.ok{border-color:var(--success);background:var(--success-light)}
 .match-review-item.wrong{border-color:var(--error);background:var(--error-light)}
+/* ─── CET COMBINED WT + READING SCREENS ────────────────────── */
+#screen-cet-wt,#screen-cet-reading{flex-direction:column;position:relative;overflow:hidden}
+.wt-topbar,.rt-topbar{display:flex;align-items:center;justify-content:space-between;padding:.6rem 1.2rem;background:var(--card);border-bottom:1px solid var(--border);flex-shrink:0;gap:.7rem;min-height:52px}
+.wt-topbar-center,.rt-topbar-center{display:flex;flex-direction:column;align-items:center;gap:.05rem;flex:1;min-width:0}
+.wt-tabbar,.rt-tabbar{display:flex;border-bottom:2px solid var(--border);flex-shrink:0;background:var(--bg)}
+.wt-tab,.rt-tab{flex:1;padding:.5rem .4rem;background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;font-family:'Sora',sans-serif;font-size:.78rem;font-weight:600;color:var(--ink-muted);cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:.3rem}
+.wt-tab:hover,.rt-tab:hover{color:var(--ink);background:var(--accent-light)}
+.wt-tab.wt-tab-active,.rt-tab.rt-tab-active{color:var(--accent-dark);border-bottom-color:var(--accent);background:var(--accent-light)}
+.wt-panel,.rt-panel{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.wt-content-wrap,.rt-content-wrap{max-width:760px;margin:0 auto;width:100%;padding:1.4rem 1.4rem 3rem;box-sizing:border-box}
+.wt-hint-box{background:var(--accent-light);border:1px solid #F0C890;border-radius:var(--r);padding:.85rem 1.1rem;font-size:.81rem;line-height:1.65;color:var(--ink-mid);margin-bottom:1.2rem}
+.wt-wc{font-size:.78rem;color:var(--ink-muted);font-weight:500}
+.wt-wc.over-limit{color:var(--error);font-weight:600}
+.wt-lock-overlay{position:absolute;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:50;padding:1rem;overflow-y:auto}
+.rt-badge{display:inline-block;background:var(--accent);color:#fff;border-radius:8px;font-size:.64rem;padding:.05rem .35rem;font-weight:700;min-width:1.8rem;text-align:center;margin-left:.25rem}
+.comp-q{margin-bottom:1.4rem;padding-bottom:1.4rem;border-bottom:1px solid var(--border-light)}
+.comp-q:last-child{border-bottom:none;margin-bottom:0}
+.comp-q-num{font-size:.63rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.4rem}
+.comp-q-text{font-size:.88rem;color:var(--ink);line-height:1.55;margin-bottom:.75rem;font-weight:500}
+.comp-opts{display:flex;flex-direction:column;gap:.45rem}
+.comp-opt{display:flex;gap:.6rem;padding:.55rem .8rem;background:var(--card);border:1.5px solid var(--border);border-radius:8px;font-size:.82rem;color:var(--ink-mid);cursor:pointer;transition:all .18s;align-items:flex-start}
+.comp-opt:hover{border-color:var(--accent);background:var(--accent-light)}
+.comp-opt.selected{border-color:var(--accent);background:var(--accent-light);color:var(--ink)}
+.opt-label{display:inline-flex;align-items:center;justify-content:center;width:1.4em;height:1.4em;background:var(--border);border-radius:4px;font-size:.78em;font-weight:700;flex-shrink:0;margin-top:.05rem}
+.comp-opt.selected .opt-label{background:var(--accent);color:#fff}
 </style>
 </head>
 <body>
@@ -1330,15 +1355,15 @@ const QB_B = {
 const CET4_DATA = {
   writing: {
     prompts: [
-      {text:'Suppose the student union of your university is collecting opinions on improving campus life. Write a short response suggesting one specific improvement and briefly explaining why it would help students. (80–120 words)', target:'Target: 80–120 words', sampleKey:'cet4su', minWords:80, maxWords:120},
-      {text:'Your university is planning to add one new facility on campus. Write a short proposal suggesting what it should be and explaining why students would benefit from it. (80–120 words)', target:'Target: 80–120 words', sampleKey:'cet4', minWords:80, maxWords:120},
-      {text:'Suppose your university library wants to improve its services. Write a short response suggesting one specific change and briefly explaining how it would help students. (80–120 words)', target:'Target: 80–120 words', sampleKey:'cet4', minWords:80, maxWords:120},
+      {text:'Suppose the student union of your university is collecting opinions on improving campus life. Write an introduction and one supporting paragraph suggesting one specific improvement. No conclusion needed. You may support your point with reasoning, examples, or personal experience. (60–75 words)', target:'Target: 60–75 words', sampleKey:'cet4su', minWords:60, maxWords:75},
+      {text:'Your university is planning to add one new facility on campus. Write an introduction and one supporting paragraph suggesting what it should be and why. No conclusion needed. You may support your point with reasoning, examples, or personal experience. (60–75 words)', target:'Target: 60–75 words', sampleKey:'cet4', minWords:60, maxWords:75},
+      {text:'Suppose your university library wants to improve its services. Write an introduction and one supporting paragraph suggesting one specific change and how it would help. No conclusion needed. You may support your point with reasoning, examples, or personal experience. (60–75 words)', target:'Target: 60–75 words', sampleKey:'cet4', minWords:60, maxWords:75},
     ],
   },
   cloze: {
-    wordBank: ['absorb','ahead','breaks','decline','difference','eliminate','guilty','manage','plan','produce','properly','reduce','result','schedule','study'],
-    answers: ['manage','guilty','schedule','ahead','breaks','absorb','decline','eliminate','produce','difference'],
-    passage: 'Many students find it difficult to [26] their time effectively. They spend hours on social media and then feel [27] about falling behind on their studies. Researchers suggest that making a daily [28] can help students stay on track. By writing down tasks in [29], students can focus on what matters most.\n\nAnother helpful strategy is to take short [30] during study sessions. Studies show that the brain needs rest to [31] new information properly. Without breaks, concentration begins to [32] after about 45 minutes.\n\nFinally, it is important to [33] distractions during study time. Turning off notifications on your phone is one simple step. Students who follow these habits tend to [34] better results in their exams. Building good study habits early can make a lasting [35] on academic performance.',
+    wordBank: ['absorb','ahead','breaks','decline','eliminate','guilty','manage','plan','properly','reduce','result','schedule'],
+    answers: ['manage','guilty','schedule','ahead','breaks','absorb','decline','eliminate'],
+    passage: 'Many students find it difficult to [26] their time effectively. They spend hours on social media and then feel [27] about falling behind on their studies. Researchers suggest that making a daily [28] can help students stay on track. By writing down tasks in [29], students can focus on what matters most.\n\nAnother helpful strategy is to take short [30] during study sessions. Studies show that the brain needs rest to [31] new information properly. Without breaks, concentration begins to [32] after about 45 minutes.\n\nFinally, it is important to [33] distractions during study time. Turning off notifications on your phone is one simple step. Students who follow these habits regularly tend to perform better in their exams and build lasting academic skills.',
   },
   matching: {
     title: 'Walking Is the Most Underrated Form of Exercise',
@@ -1358,11 +1383,6 @@ const CET4_DATA = {
       {num:38, text:'Adults who walked several miles a week were found to retain more brain tissue in old age.', answer:'C'},
       {num:39, text:'One of the major advantages of walking is that it requires no money, equipment, or special skills.', answer:'D'},
       {num:40, text:'Doctors now recommend walking as a way to ease mild mental health conditions without medication.', answer:'E'},
-      {num:41, text:'The fact that walking rarely causes injury helps people maintain the habit over a longer period.', answer:'F'},
-      {num:42, text:'Local governments worldwide are modifying city layouts to encourage more people to walk.', answer:'G'},
-      {num:43, text:'Health professionals say the most effective exercise is the one a person is willing to repeat regularly.', answer:'H'},
-      {num:44, text:'Walking at least 30 minutes a day five times per week was linked to lower risks of heart disease and cancer.', answer:'B'},
-      {num:45, text:'The overall health improvements from walking can match those of more intense exercise when total time is equal.', answer:'F'},
     ],
   },
   comprehension: [
@@ -1377,17 +1397,6 @@ const CET4_DATA = {
         {q:'What does the author call for at the end of the passage?', opts:['Replacing chemical drugs with natural treatments.','Educating patients about the best time to take medicine.','Further research into the optimal timing for different treatments.','Updating prescription guidelines for all current medications.'], a:2},
       ],
     },
-    {
-      title:'Passage Two (Questions 51–55)',
-      passage:'The number of Americans working into their 70s has risen sharply over the past two decades. Today, nearly 15 percent of people in their 70s are still employed, up from less than 10 percent 20 years ago.\n\nSeveral factors explain this trend. Many people are living longer and staying healthier than previous generations. Financial pressures also play a role: slow wage growth and the decline of traditional pension plans have left many workers without sufficient savings for retirement.\n\nEducation level matters as well. Nearly 20 percent of college-educated Americans worked past 70 in 2018, compared to around 10 percent of those with only a high school diploma.\n\nResearch also shows that retirement can lead to social isolation, especially for men. Many well-educated professionals choose to keep working partly to maintain social connections and because they genuinely enjoy their work. Workers in physically demanding jobs, by contrast, often look forward to retirement but may continue working for financial reasons.',
-      questions: [
-        {q:'What has happened to the proportion of Americans working in their 70s?', opts:['It has remained steady for two decades.','It has dropped because of better pension plans.','It has risen from under 10% to nearly 15%.','It has more than doubled among all age groups.'], a:2},
-        {q:'What financial factor is mentioned as a reason for delayed retirement?', opts:['Employers are raising wages for older workers.','Many workers have seen slow real wage growth and weaker pensions.','Government payments to retirees have been reduced.','Stock markets have made savings grow too slowly.'], a:1},
-        {q:'What does the passage say about the relationship between education and working longer?', opts:['Higher education leads to less enjoyable work.','College graduates earn more and retire earlier.','More educated workers tend to work longer into old age.','Workers with less education are more likely to keep working.'], a:2},
-        {q:'Why do many educated professionals continue working, according to the passage?', opts:['They need to pay back education loans.','They want to earn enough to support their children.','They value the social connections and enjoyment work provides.','They are required to stay by company policy.'], a:2},
-        {q:'What does the passage suggest about physically demanding workers who keep working?', opts:['They genuinely enjoy the challenge of hard physical work.','They are likely continuing mainly for financial reasons.','They tend to have better health than office workers.','They rarely experience social isolation after retirement.'], a:1},
-      ],
-    },
   ],
   translation: {
     source: '近年来，中国的电子商务（e-commerce）发展迅速，改变了人们的购物方式。越来越多的消费者选择网上购物，既方便又快捷。目前，中国已成为全球最大的电子商务市场，带动了物流和支付等行业的快速发展。',
@@ -1398,15 +1407,15 @@ const CET4_DATA = {
 const CET6_DATA = {
   writing: {
     prompts: [
-      {text:'Write an essay that begins with the sentence "While striving for the Chinese Dream, young people enjoy more opportunities to realize their self-worth." Support your view with one specific example or reason and a brief conclusion. (100–130 words)\n\nYou should copy the sentence given in quotes at the beginning of your essay.', target:'Target: 100–130 words', sampleKey:'cet6', minWords:100, maxWords:130},
-      {text:'Write an essay that begins with the sentence "A society that values creativity is one in which individuals are encouraged to think independently and act boldly." Support this view with one specific example or reason and a brief conclusion. (100–130 words)\n\nYou should copy the sentence given in quotes at the beginning of your essay.', target:'Target: 100–130 words', sampleKey:'cet6', minWords:100, maxWords:130},
-      {text:'Write an essay that begins with the sentence "Technological advancement has profoundly transformed the way we communicate, learn and work." Support this claim with one specific example and a brief conclusion. (100–130 words)\n\nYou should copy the sentence given in quotes at the beginning of your essay.', target:'Target: 100–130 words', sampleKey:'cet6', minWords:100, maxWords:130},
+      {text:'Write an essay that begins with the sentence "While striving for the Chinese Dream, young people enjoy more opportunities to realize their self-worth." Write an introduction and one supporting paragraph only. No conclusion needed. You may support your point with reasoning, examples, or personal experience. (60–75 words)\n\nYou should copy the sentence given in quotes at the beginning of your essay.', target:'Target: 60–75 words', sampleKey:'cet6', minWords:60, maxWords:75},
+      {text:'Write an essay that begins with the sentence "A society that values creativity is one in which individuals are encouraged to think independently and act boldly." Write an introduction and one supporting paragraph only. No conclusion needed. You may support your point with reasoning, examples, or personal experience. (60–75 words)\n\nYou should copy the sentence given in quotes at the beginning of your essay.', target:'Target: 60–75 words', sampleKey:'cet6', minWords:60, maxWords:75},
+      {text:'Write an essay that begins with the sentence "Technological advancement has profoundly transformed the way we communicate, learn and work." Write an introduction and one supporting paragraph only. No conclusion needed. You may support your point with reasoning, examples, or personal experience. (60–75 words)\n\nYou should copy the sentence given in quotes at the beginning of your essay.', target:'Target: 60–75 words', sampleKey:'cet6', minWords:60, maxWords:75},
     ],
   },
   cloze: {
-    wordBank: ['compelled','consolidate','disregard','efficient','eliminate','error','fundamental','impair','measurable','neglect','optional','patterns','prone','significant','stress'],
-    answers: ['fundamental','measurable','impair','neglect','compelled','efficient','eliminate','patterns','optional','error'],
-    passage: 'Sleep plays a [26] role in maintaining both physical and mental health. Research indicates that adults who sleep fewer than six hours per night show [27] declines in attention and decision-making ability. Over time, such deficits can [28] a person\'s capacity to perform well under pressure.\n\nDespite widespread awareness of these risks, many adults continue to [29] sleep in favour of other activities. They may feel [30] to stay productive by working late, not realising that a well-rested brain is far more [31] than an exhausted one.\n\nNeuroscientists also point out that sleep allows the brain to [32] harmful proteins associated with cognitive decline. Those who maintain regular sleep [33] benefit from sharper memory and better emotional regulation. Experts warn that treating sleep as [34] is a serious [35] that society must address collectively.',
+    wordBank: ['compelled','disregard','efficient','eliminate','error','fundamental','impair','measurable','neglect','optional','patterns','prone'],
+    answers: ['fundamental','measurable','impair','neglect','compelled','efficient','eliminate','patterns'],
+    passage: 'Sleep plays a [26] role in maintaining both physical and mental health. Research indicates that adults who sleep fewer than six hours per night show [27] declines in attention and decision-making ability. Over time, such deficits can [28] a person\'s capacity to perform well under pressure.\n\nDespite widespread awareness of these risks, many adults continue to [29] sleep in favour of other activities. They may feel [30] to stay productive by working late, not realising that a well-rested brain is far more [31] than an exhausted one.\n\nNeuroscientists also point out that sleep allows the brain to [32] harmful proteins associated with cognitive decline. Those who maintain regular sleep [33] benefit from sharper memory and better emotional regulation. Experts say that treating rest as optional is a serious mistake that society must collectively address.',
   },
   matching: {
     title: 'The Rise of Remote Work and Its Hidden Costs',
@@ -1426,11 +1435,6 @@ const CET6_DATA = {
       {num:38, text:'Remote work was first adopted as a crisis response but soon became a long-term policy in many organisations.', answer:'A'},
       {num:39, text:'A reduction in commuting contributed to lower carbon emissions in urban areas during remote work periods.', answer:'G'},
       {num:40, text:'Employers have tried hybrid schedules and digital tools to substitute for in-person contact, but none has fully worked.', answer:'E'},
-      {num:41, text:'Junior employees feel their career development has been slower compared to colleagues of earlier generations.', answer:'D'},
-      {num:42, text:'Working from home improved job satisfaction and balance, but increased social isolation for some employees.', answer:'C'},
-      {num:43, text:'Firms that achieve the right blend of remote and office-based work will have an advantage in hiring talent.', answer:'H'},
-      {num:44, text:'Productivity of individual workers under remote conditions proved higher than many executives had expected.', answer:'A'},
-      {num:45, text:'Some employers now require staff to be in the office on set days to maintain regular face-to-face interaction.', answer:'E'},
     ],
   },
   comprehension: [
@@ -2640,32 +2644,40 @@ function retake() {
 }
 
 // ─── CET MODE ────────────────────────────────────────────────
-const CET_STEPS = ['writing','cloze','matching','comp1','comp2','translation'];
+const CET_STEPS = ['wt', 'reading'];
 let cetTimerInterval = null;
 let cetTransTimerInterval = null;
+let cetWTTimerInterval = null;
+let cetReadingTimerInterval = null;
 let cetTimerSecs = 0;
+let cetWTSecs = 0;
+let cetReadingSecs = 0;
 let cetClozeAnswers = [];
 let cetMatchAnswers = [];
 let cetCompAnswers = [[null,null,null,null,null],[null,null,null,null,null]];
+let cetCompAnswers2 = [null,null,null,null,null];
 let cetCompIdx = 0;
 let cetTransText = '';
+let cetWTWritingText = '';
+let cetWTTransText = '';
 let cetScores = {};
 
 function cetClearTimers() {
   clearInterval(cetTimerInterval);
   clearInterval(cetTransTimerInterval);
+  clearInterval(cetWTTimerInterval);
+  clearInterval(cetReadingTimerInterval);
 }
 
 function isCET() { return S.exam === 'cet4' || S.exam === 'cet6'; }
 function getCETData() { return S.exam === 'cet6' ? CET6_DATA : CET4_DATA; }
 
 function cetUpdatePips() {
-  const steps = CET_STEPS;
   const cur = S.cetStep || 0;
-  ['cet-pips-writing','cet-pips-cloze','cet-pips-match','cet-pips-trans'].forEach(id => {
+  ['cet-pips-wt','cet-pips-reading'].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
-    el.innerHTML = steps.map((_, i) =>
+    el.innerHTML = CET_STEPS.map((_, i) =>
       '<div class="cet-step-pip' + (i < cur ? ' done' : i === cur ? ' active' : '') + '"></div>'
     ).join('');
   });
@@ -2674,15 +2686,16 @@ function cetUpdatePips() {
 // ─── CET PRETEST ──────────────────────────────────────────────
 function startCETTest() {
   S.cetStep = 0;
-  cetScores = {cloze:0, matching:0, comp1:0, comp2:0, translation:null};
-  cetClozeAnswers = new Array(10).fill(null);
-  cetMatchAnswers = new Array(10).fill(null);
-  cetCompAnswers = [[null,null,null,null,null],[null,null,null,null,null]];
+  cetScores = {writing:null, translation:null, cloze:0, matching:0, comp:0};
+  cetClozeAnswers = new Array(8).fill(null);
+  cetMatchAnswers = new Array(5).fill(null);
+  cetCompAnswers2 = [null,null,null,null,null];
+  cetWTWritingText = '';
+  cetWTTransText = '';
   showCETPretest();
 }
 
 function showCETPretest() {
-  const d = getCETData();
   const is6 = S.exam === 'cet6';
   const ptCard = document.getElementById('pretest-card') || document.querySelector('.pretest-card');
   if (ptCard) {
@@ -2695,31 +2708,35 @@ function showCETPretest() {
       '<div class="pt-columns">' +
         '<div>' +
           '<div class="pt-section"><div class="pt-title">Test Structure</div>' +
-            '<div class="pt-sec-row"><div class="pt-sec-name">✏️ Writing</div>' +
-              '<div class="pt-sec-modules"><div>Part I · Essay</div><div class="pt-mod-time">20 minutes · ' + (is6 ? '100–130' : '80–120') + ' words</div></div></div>' +
-            '<div class="pt-sec-row"><div class="pt-sec-name">📖 Reading A</div>' +
-              '<div class="pt-sec-modules"><div>Section A · Cloze</div><div class="pt-mod-time">10 minutes · 10 blanks · word bank</div></div></div>' +
-            '<div class="pt-sec-row"><div class="pt-sec-name">🔍 Reading B</div>' +
-              '<div class="pt-sec-modules"><div>Section B · Paragraph Matching</div><div class="pt-mod-time">12 minutes · 10 statements</div></div></div>' +
-            '<div class="pt-sec-row"><div class="pt-sec-name">📚 Reading C</div>' +
-              '<div class="pt-sec-modules"><div>Section C · Two Passages</div><div class="pt-mod-time">20 minutes · 5 MCQ each</div></div></div>' +
-            '<div class="pt-sec-row"><div class="pt-sec-name">🌐 Translation</div>' +
-              '<div class="pt-sec-modules"><div>Part IV · Chinese → English</div><div class="pt-mod-time">20 minutes · passage translation</div></div></div>' +
+            '<div class="pt-sec-row"><div class="pt-sec-name">✏️ Period 1</div>' +
+              '<div class="pt-sec-modules"><div>Writing &amp; Translation — shared timer</div><div class="pt-mod-time">25 minutes · switch freely between the two</div></div></div>' +
+            '<div class="pt-sec-row" style="padding-left:1.4rem"><div class="pt-sec-name" style="color:var(--ink-muted);font-size:.75rem">✏️ Writing</div>' +
+              '<div class="pt-sec-modules"><div style="font-size:.78rem">Intro + 1 support para · no conclusion</div><div class="pt-mod-time">60–75 words · reasoning / examples ok</div></div></div>' +
+            '<div class="pt-sec-row" style="padding-left:1.4rem"><div class="pt-sec-name" style="color:var(--ink-muted);font-size:.75rem">🌐 Translation</div>' +
+              '<div class="pt-sec-modules"><div style="font-size:.78rem">Chinese → English passage</div><div class="pt-mod-time">One AI-graded submission code for both</div></div></div>' +
+            '<div class="pt-sec-row" style="margin-top:.5rem"><div class="pt-sec-name">📖 Period 2</div>' +
+              '<div class="pt-sec-modules"><div>Reading — shared timer</div><div class="pt-mod-time">20 minutes · switch freely between sections</div></div></div>' +
+            '<div class="pt-sec-row" style="padding-left:1.4rem"><div class="pt-sec-name" style="color:var(--ink-muted);font-size:.75rem">📚 Passage</div>' +
+              '<div class="pt-sec-modules"><div style="font-size:.78rem">1 passage · 5 MCQ</div><div class="pt-mod-time">~8 min guideline</div></div></div>' +
+            '<div class="pt-sec-row" style="padding-left:1.4rem"><div class="pt-sec-name" style="color:var(--ink-muted);font-size:.75rem">🔍 Matching</div>' +
+              '<div class="pt-sec-modules"><div style="font-size:.78rem">5 statements · match paragraph (A–H)</div><div class="pt-mod-time">~5 min guideline</div></div></div>' +
+            '<div class="pt-sec-row" style="padding-left:1.4rem"><div class="pt-sec-name" style="color:var(--ink-muted);font-size:.75rem">📖 Cloze</div>' +
+              '<div class="pt-sec-modules"><div style="font-size:.78rem">8 blanks · 12-word bank (A–L)</div><div class="pt-mod-time">~7 min guideline</div></div></div>' +
           '</div>' +
         '</div>' +
         '<div class="pt-col-right">' +
           '<div class="pt-section"><div class="pt-title">Format Notes</div>' +
             '<div style="font-size:.82rem;color:var(--ink-mid);line-height:1.7">' +
-              '<div class="pt-row"><span>Writing</span><span class="pt-val">Essay task</span></div>' +
-              '<div class="pt-row"><span>Cloze</span><span class="pt-val">15 word options → 10 blanks</span></div>' +
-              '<div class="pt-row"><span>Matching</span><span class="pt-val">Labeled paragraphs A–H</span></div>' +
-              '<div class="pt-row"><span>Reading C</span><span class="pt-val">4 choices per question</span></div>' +
+              '<div class="pt-row"><span>Writing</span><span class="pt-val">AI-graded essay</span></div>' +
               '<div class="pt-row"><span>Translation</span><span class="pt-val">AI-graded passage</span></div>' +
-              '<div class="pt-row"><span>Total time</span><span class="pt-val">~72 min</span></div>' +
+              '<div class="pt-row"><span>Cloze</span><span class="pt-val">12 words → 8 blanks</span></div>' +
+              '<div class="pt-row"><span>Matching</span><span class="pt-val">Paragraphs A–H</span></div>' +
+              '<div class="pt-row"><span>Reading</span><span class="pt-val">4 choices per question</span></div>' +
+              '<div class="pt-row"><span>Total time</span><span class="pt-val">~45 min</span></div>' +
             '</div>' +
           '</div>' +
           '<div class="pt-section" style="border-bottom:none;margin-bottom:0;padding-bottom:0"><div class="pt-title">Note</div>' +
-            '<div style="font-size:.8rem;color:var(--ink-muted);line-height:1.65">Listening comprehension is not included in this simulation. Writing is graded by AI; enter your submission code when prompted.</div>' +
+            '<div style="font-size:.8rem;color:var(--ink-muted);line-height:1.65">Listening is not included. Writing &amp; Translation share one submission code. Reading is scored automatically after you submit all sections.</div>' +
           '</div>' +
         '</div>' +
       '</div>' +
@@ -2737,12 +2754,8 @@ function showCETStep() {
   const step = CET_STEPS[S.cetStep];
   cetClearTimers();
   cetUpdatePips();
-  if (step === 'writing') showCETWriting();
-  else if (step === 'cloze') showCETCloze();
-  else if (step === 'matching') showCETMatching();
-  else if (step === 'comp1') showCETComp(0);
-  else if (step === 'comp2') showCETComp(1);
-  else if (step === 'translation') showCETTranslation();
+  if (step === 'wt') showCETWT();
+  else if (step === 'reading') showCETReading();
 }
 
 function cetNextStep() {
@@ -2880,6 +2893,267 @@ function cetSkipEssay() {
 }
 
 function cetContinueFromWritingEval() { cetNextStep(); }
+
+// ─── CET COMBINED: WRITING + TRANSLATION (25 min) ─────────────
+function showCETWT() {
+  const d = getCETData();
+  const prompts = d.writing.prompts;
+  const p = prompts[Math.floor(Math.random() * prompts.length)];
+  S.cetWTPrompt = p;
+  document.getElementById('wt-essay-prompt').textContent = p.text;
+  document.getElementById('wt-essay-target').textContent = p.target;
+  document.getElementById('wt-trans-source').textContent = d.translation.source;
+  const essayEl = document.getElementById('wt-essay-area');
+  if (essayEl) { essayEl.value = cetWTWritingText || ''; essayEl.disabled = false; }
+  const transEl = document.getElementById('wt-trans-area');
+  if (transEl) { transEl.value = cetWTTransText || ''; transEl.disabled = false; }
+  document.getElementById('wt-wc').textContent = '0 words';
+  document.getElementById('wt-trans-wc').textContent = '0 words';
+  document.getElementById('wt-lock-overlay').style.display = 'none';
+  switchWTTab('writing');
+  cetUpdatePips();
+  cetWTSecs = 1500;
+  updateWTTimer();
+  cetWTTimerInterval = setInterval(() => {
+    cetWTSecs--;
+    updateWTTimer();
+    if (cetWTSecs <= 0) { clearInterval(cetWTTimerInterval); doWTTimeout(); }
+  }, 1000);
+  show('screen-cet-wt');
+}
+
+function switchWTTab(tab) {
+  const isW = tab === 'writing';
+  document.getElementById('wt-panel-writing').style.display = isW ? '' : 'none';
+  document.getElementById('wt-panel-translation').style.display = isW ? 'none' : '';
+  document.getElementById('wt-tab-writing').classList.toggle('wt-tab-active', isW);
+  document.getElementById('wt-tab-translation').classList.toggle('wt-tab-active', !isW);
+}
+
+function updateWTTimer() {
+  const el = document.getElementById('wt-timer');
+  if (!el) return;
+  const m = Math.floor(cetWTSecs / 60), s = cetWTSecs % 60;
+  el.textContent = m + ':' + String(s).padStart(2,'0');
+  el.classList.toggle('timer-danger', cetWTSecs <= 120);
+}
+
+function updateWTWC() {
+  const text = document.getElementById('wt-essay-area').value;
+  const wc = text.trim() ? text.trim().split(/\s+/).length : 0;
+  const max = S.cetWTPrompt ? (S.cetWTPrompt.maxWords || 75) : 75;
+  const el = document.getElementById('wt-wc');
+  if (el) { el.textContent = wc + ' words'; el.classList.toggle('over-limit', wc > max); }
+}
+
+function updateWTTransWC() {
+  const text = document.getElementById('wt-trans-area').value;
+  const wc = text.trim() ? text.trim().split(/\s+/).length : 0;
+  const el = document.getElementById('wt-trans-wc');
+  if (el) el.textContent = wc + ' words';
+}
+
+function doWTTimeout() {
+  cetWTWritingText = document.getElementById('wt-essay-area').value.trim();
+  cetWTTransText = document.getElementById('wt-trans-area').value.trim();
+  document.getElementById('wt-essay-area').disabled = true;
+  document.getElementById('wt-trans-area').disabled = true;
+  showWTLocked('timeout');
+}
+
+function trySubmitWT() {
+  clearInterval(cetWTTimerInterval);
+  cetWTWritingText = document.getElementById('wt-essay-area').value.trim();
+  cetWTTransText = document.getElementById('wt-trans-area').value.trim();
+  document.getElementById('wt-essay-area').disabled = true;
+  document.getElementById('wt-trans-area').disabled = true;
+  showWTLocked('submit');
+}
+
+function showWTLocked(reason) {
+  const msgs = {
+    timeout:      'Time\'s up — both saved. Enter your submission code to grade Writing and Translation.',
+    submit:       'Ready to submit. Enter your submission code to grade Writing and Translation.',
+    invalid_code: 'Incorrect submission code. Check with your teacher and try again.',
+    unavailable:  'Grading is temporarily unavailable. Enter your code below to try again.',
+  };
+  document.getElementById('wt-lock-msg').textContent = msgs[reason] || msgs.submit;
+  document.getElementById('wt-essay-preview').textContent = cetWTWritingText || '(no essay)';
+  document.getElementById('wt-trans-preview').textContent = cetWTTransText || '(no translation)';
+  document.getElementById('wt-code').value = '';
+  document.getElementById('wt-code-err').style.display = 'none';
+  document.getElementById('wt-lock-overlay').style.display = 'flex';
+}
+
+async function submitWTWithCode() {
+  const code = document.getElementById('wt-code').value.trim();
+  const errEl = document.getElementById('wt-code-err');
+  if (!code) { errEl.textContent = 'Please enter your submission code.'; errEl.style.display = 'block'; return; }
+  errEl.style.display = 'none';
+  document.getElementById('wt-lock-overlay').style.display = 'none';
+  show('screen-writing-loading');
+  const d = getCETData();
+  try {
+    const [essayRes, transRes] = await Promise.all([
+      fetch('https://lexis-grader.mhtcgyj7st.workers.dev/', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({essay:cetWTWritingText, prompt:S.cetWTPrompt ? S.cetWTPrompt.text : '', code}),
+      }),
+      fetch('https://lexis-grader.mhtcgyj7st.workers.dev/', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({essay:cetWTTransText, prompt:d.translation.prompt, code}),
+      }),
+    ]);
+    if (essayRes.status === 403 || transRes.status === 403) {
+      show('screen-cet-wt'); showWTLocked('invalid_code'); return;
+    }
+    if (!essayRes.ok || !transRes.ok) throw new Error('HTTP error');
+    const [essayAI, transAI] = await Promise.all([essayRes.json(), transRes.json()]);
+    if (typeof essayAI.score !== 'number' || typeof transAI.score !== 'number') throw new Error('Bad response');
+    cetScores.writing = Math.round(essayAI.score);
+    cetScores.translation = Math.round(transAI.score);
+    cetNextStep();
+  } catch(e) {
+    console.error('[CET WT]', e.message);
+    show('screen-cet-wt'); showWTLocked('unavailable');
+  }
+}
+
+function skipWTGrading() {
+  clearInterval(cetWTTimerInterval);
+  document.getElementById('wt-lock-overlay').style.display = 'none';
+  cetScores.writing = 0;
+  cetScores.translation = 0;
+  cetNextStep();
+}
+
+// ─── CET COMBINED: READING (20 min) ───────────────────────────
+function showCETReading() {
+  const d = getCETData();
+  cetClozeAnswers = new Array(8).fill(null);
+  cetMatchAnswers = new Array(5).fill(null);
+  cetCompAnswers2 = [null,null,null,null,null];
+  // Build cloze
+  const c = d.cloze;
+  const BANK_LETTERS = 'ABCDEFGHIJKL';
+  window._cetClozeLetterMap2 = {};
+  c.wordBank.forEach((w, i) => { window._cetClozeLetterMap2[BANK_LETTERS[i]] = w; });
+  document.getElementById('rt-word-bank').innerHTML = c.wordBank.map((w, i) =>
+    '<span class="word-chip"><span class="chip-letter">' + BANK_LETTERS[i] + '</span>' + w + '</span>'
+  ).join('');
+  let passageHtml = c.passage.replace(/\[(\d+)\]/g, (_, num) => {
+    const idx = parseInt(num) - 26;
+    return '<input class="blank-input" type="text" maxlength="1" placeholder="?" data-idx="' + idx + '" oninput="cetClozeInput2(this)" />';
+  }).replace(/\n/g, '<br><br>');
+  document.getElementById('rt-cloze-passage').innerHTML = passageHtml;
+  // Build matching
+  const m = d.matching;
+  document.getElementById('rt-matching-article').innerHTML = m.paragraphs.map(p =>
+    '<div class="para-block"><span class="para-label">' + p.id + '.</span><span class="para-text">' + escHtml(p.text) + '</span></div>'
+  ).join('');
+  document.getElementById('rt-matching-questions').innerHTML = m.statements.map((st, i) =>
+    '<div class="match-q">' +
+    '<div class="match-q-num">Statement ' + st.num + '</div>' +
+    '<div class="match-q-text">' + escHtml(st.text) + '</div>' +
+    '<input class="match-input" type="text" maxlength="1" placeholder="?" data-idx="' + i + '" oninput="cetMatchInput2(this)" />' +
+    '</div>'
+  ).join('');
+  // Build comprehension
+  const comp = d.comprehension[0];
+  document.getElementById('rt-passage-text').textContent = comp.passage;
+  document.getElementById('rt-comp-questions').innerHTML = comp.questions.map((q, i) =>
+    '<div class="comp-q" id="rtcomp' + i + '">' +
+    '<div class="comp-q-num">Question ' + (i+46) + '</div>' +
+    '<div class="comp-q-text">' + escHtml(q.q) + '</div>' +
+    '<div class="comp-opts">' +
+    q.opts.map((opt, oi) =>
+      '<div class="comp-opt" id="rtcopt' + i + '_' + oi + '" onclick="selectRTComp(this,' + i + ',' + oi + ')">' +
+      '<span class="opt-label">' + 'ABCD'[oi] + '</span><span>' + escHtml(opt) + '</span></div>'
+    ).join('') + '</div></div>'
+  ).join('');
+  switchReadingTab('passage');
+  updateRTBadges();
+  cetUpdatePips();
+  cetReadingSecs = 1200;
+  updateReadingTimer();
+  cetReadingTimerInterval = setInterval(() => {
+    cetReadingSecs--;
+    updateReadingTimer();
+    if (cetReadingSecs <= 0) { clearInterval(cetReadingTimerInterval); submitReading(); }
+  }, 1000);
+  show('screen-cet-reading');
+}
+
+function switchReadingTab(tab) {
+  ['passage','matching','cloze'].forEach(t => {
+    document.getElementById('rt-panel-' + t).style.display = t === tab ? '' : 'none';
+    document.getElementById('rt-tab-' + t).classList.toggle('rt-tab-active', t === tab);
+  });
+}
+
+function updateReadingTimer() {
+  const el = document.getElementById('rt-timer');
+  if (!el) return;
+  const m = Math.floor(cetReadingSecs / 60), s = cetReadingSecs % 60;
+  el.textContent = m + ':' + String(s).padStart(2,'0');
+  el.classList.toggle('timer-danger', cetReadingSecs <= 120);
+}
+
+function cetClozeInput2(el) {
+  const idx = parseInt(el.dataset.idx);
+  const letter = el.value.trim().toUpperCase();
+  el.value = letter;
+  const word = (window._cetClozeLetterMap2 && letter) ? (window._cetClozeLetterMap2[letter] || null) : null;
+  cetClozeAnswers[idx] = word;
+  el.classList.toggle('answered', !!word);
+  updateRTBadges();
+}
+
+function cetMatchInput2(el) {
+  const idx = parseInt(el.dataset.idx);
+  const letter = el.value.trim().toUpperCase();
+  el.value = letter;
+  cetMatchAnswers[idx] = letter || null;
+  el.classList.toggle('answered', !!letter);
+  updateRTBadges();
+}
+
+function selectRTComp(el, qi, oi) {
+  cetCompAnswers2[qi] = oi;
+  const opts = document.querySelectorAll('#rtcomp' + qi + ' .comp-opt');
+  opts.forEach((o, i) => o.classList.toggle('selected', i === oi));
+  updateRTBadges();
+}
+
+function updateRTBadges() {
+  const clozeCount = cetClozeAnswers.filter(a => a !== null).length;
+  const matchCount = cetMatchAnswers.filter(a => a !== null).length;
+  const compCount = cetCompAnswers2.filter(a => a !== null).length;
+  const el1 = document.getElementById('rtb-cloze'); if (el1) el1.textContent = clozeCount + '/8';
+  const el2 = document.getElementById('rtb-matching'); if (el2) el2.textContent = matchCount + '/5';
+  const el3 = document.getElementById('rtb-passage'); if (el3) el3.textContent = compCount + '/5';
+}
+
+function submitReading() {
+  clearInterval(cetReadingTimerInterval);
+  const d = getCETData();
+  let clozeCorrect = 0;
+  d.cloze.answers.forEach((ans, i) => {
+    if (cetClozeAnswers[i] && cetClozeAnswers[i].toLowerCase() === ans.toLowerCase()) clozeCorrect++;
+  });
+  cetScores.cloze = clozeCorrect;
+  let matchCorrect = 0;
+  d.matching.statements.forEach((st, i) => {
+    if (cetMatchAnswers[i] === st.answer) matchCorrect++;
+  });
+  cetScores.matching = matchCorrect;
+  let compCorrect = 0;
+  d.comprehension[0].questions.forEach((q, i) => {
+    if (cetCompAnswers2[i] === q.a) compCorrect++;
+  });
+  cetScores.comp = compCorrect;
+  cetNextStep();
+}
 
 // ─── CET CLOZE ────────────────────────────────────────────────
 function showCETCloze() {
@@ -3168,29 +3442,24 @@ function showCETSectionEnd(sectionName, subName, correct, total, onContinue) {
 // ─── CET RESULTS ──────────────────────────────────────────────
 function showCETResults() {
   const is6 = S.exam === 'cet6';
-  const d = getCETData();
+  const writing = typeof cetScores.writing === 'number' ? cetScores.writing : null;
+  const trans = typeof cetScores.translation === 'number' ? cetScores.translation : null;
   const cloze = cetScores.cloze || 0;
   const match = cetScores.matching || 0;
-  const comp1 = cetScores.comp1 || 0;
-  const comp2 = cetScores.comp2 || 0;
-  const trans = cetScores.translation || 0;
-  const writing = typeof cetScores.writing === 'number' ? cetScores.writing : null;
+  const comp = cetScores.comp || 0;
 
-  const clozePct  = Math.round((cloze / 10) * 100);
-  const matchPct  = Math.round((match / 10) * 100);
-  const comp1Pct  = Math.round((comp1 / 5) * 100);
-  const comp2Pct  = Math.round((comp2 / 5) * 100);
-  const readPct   = Math.round(((cloze + match + comp1 + comp2) / 30) * 100);
   const writePct  = writing !== null ? Math.round((writing / 5) * 100) : null;
-  const transPct  = Math.round((trans / 5) * 100);
+  const transPct  = trans !== null ? Math.round((trans / 5) * 100) : null;
+  const clozePct  = Math.round((cloze / 8) * 100);
+  const matchPct  = Math.round((match / 5) * 100);
+  const compPct   = Math.round((comp / 5) * 100);
 
   const secs = [
-    {name:'Writing (Part I)', icon:'✏️', pct: writePct !== null ? writePct : null, sub: writing !== null ? 'AI Score: ' + writing + '/5' : 'Not graded'},
-    {name:'Reading A — Cloze', icon:'📖', pct: clozePct, sub: cloze + '/10 correct'},
-    {name:'Reading B — Matching', icon:'🔍', pct: matchPct, sub: match + '/10 correct'},
-    {name:'Reading C — Passage 1', icon:'📚', pct: comp1Pct, sub: comp1 + '/5 correct'},
-    {name:'Reading C — Passage 2', icon:'📚', pct: comp2Pct, sub: comp2 + '/5 correct'},
-    {name:'Translation (Part IV)', icon:'🌐', pct: transPct, sub: trans > 0 ? 'AI Score: ' + trans + '/5' : 'Not graded'},
+    {name:'Writing (Part I)', icon:'✏️', pct: writePct, sub: writing !== null ? 'AI Score: ' + writing + '/5' : 'Not graded'},
+    {name:'Translation (Part IV)', icon:'🌐', pct: transPct, sub: (trans !== null && trans > 0) ? 'AI Score: ' + trans + '/5' : 'Not graded'},
+    {name:'Reading A — Cloze', icon:'📖', pct: clozePct, sub: cloze + '/8 correct'},
+    {name:'Reading B — Matching', icon:'🔍', pct: matchPct, sub: match + '/5 correct'},
+    {name:'Reading C — Passage', icon:'📚', pct: compPct, sub: comp + '/5 correct'},
   ];
 
   const validPcts = secs.map(s => s.pct).filter(p => p !== null);
@@ -3335,6 +3604,109 @@ S = initState();
         <button class="submit-essay-btn" onclick="trySubmitTranslation()">Submit Translation →</button>
         <button class="skip-btn" onclick="skipTranslation()" style="padding:.9rem 1.4rem">Skip Translation</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- CET WRITING + TRANSLATION COMBINED SCREEN -->
+<div id="screen-cet-wt" class="screen">
+  <div class="wt-topbar">
+    <div class="hdr-brand">L<em>E</em>X<em>I</em>S</div>
+    <div class="wt-topbar-center">
+      <div class="cet-step-bar" id="cet-pips-wt" style="padding:0"></div>
+      <div style="display:flex;align-items:center;gap:.5rem">
+        <span style="font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted)">Writing &amp; Translation</span>
+        <div class="mod-timer" id="wt-timer" style="font-size:1rem;font-weight:600;color:var(--ink-mid);letter-spacing:.04em;min-width:48px">25:00</div>
+      </div>
+    </div>
+    <button class="submit-mod-hdr" onclick="trySubmitWT()">Lock &amp; Submit →</button>
+  </div>
+  <div class="wt-tabbar">
+    <button class="wt-tab wt-tab-active" id="wt-tab-writing" onclick="switchWTTab('writing')">✏️ Writing</button>
+    <button class="wt-tab" id="wt-tab-translation" onclick="switchWTTab('translation')">🌐 Translation</button>
+  </div>
+  <div class="wt-panel" id="wt-panel-writing">
+    <div class="wt-content-wrap">
+      <div class="wt-hint-box">Write an <strong>introduction + one supporting paragraph only</strong>. No conclusion needed. You may use reasoning, examples, or personal experience — more generous than TOEFL/IELTS. Target: <strong>60–75 words</strong>. Switch to Translation tab anytime.</div>
+      <div class="writing-prompt-box">
+        <div class="writing-prompt-label">Prompt</div>
+        <div class="writing-prompt-text" id="wt-essay-prompt"></div>
+        <div class="writing-prompt-target" id="wt-essay-target">Target: 60–75 words</div>
+      </div>
+      <div class="writing-meta-bar"><span class="wt-wc" id="wt-wc">0 words</span></div>
+      <textarea id="wt-essay-area" class="essay-area" placeholder="Write your essay here..." oninput="updateWTWC()" style="min-height:180px;width:100%;display:block;margin-bottom:1rem;box-sizing:border-box"></textarea>
+    </div>
+  </div>
+  <div class="wt-panel" id="wt-panel-translation" style="display:none">
+    <div class="wt-content-wrap">
+      <div class="writing-prompt-box">
+        <div class="writing-prompt-label">Source Text — Translate from Chinese into English</div>
+        <div class="writing-prompt-text" id="wt-trans-source" style="font-size:1rem;line-height:1.75;font-family:'Sora',sans-serif"></div>
+        <div class="writing-prompt-target">Write a complete English translation. Switch back to Writing anytime — the 25-minute timer is shared.</div>
+      </div>
+      <div class="writing-meta-bar"><span class="wt-wc" id="wt-trans-wc">0 words</span></div>
+      <textarea id="wt-trans-area" class="essay-area" placeholder="Write your translation here..." oninput="updateWTTransWC()" style="min-height:200px;width:100%;display:block;margin-bottom:1rem;box-sizing:border-box"></textarea>
+    </div>
+  </div>
+  <div class="wt-lock-overlay" id="wt-lock-overlay" style="display:none">
+    <div class="modal-box" style="max-width:500px;width:100%">
+      <div style="font-size:1.6rem;text-align:center;margin-bottom:.4rem">🔒</div>
+      <div class="modal-title" style="text-align:center;margin-bottom:.5rem">Writing &amp; Translation Locked</div>
+      <div class="modal-body" id="wt-lock-msg" style="margin-bottom:1rem"></div>
+      <div style="font-size:.65rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.3rem">Your Essay</div>
+      <div id="wt-essay-preview" style="background:var(--border-light);border:1px solid var(--border);border-radius:8px;padding:.65rem 1rem;font-size:.8rem;line-height:1.6;color:var(--ink-mid);max-height:80px;overflow-y:auto;margin-bottom:.8rem;white-space:pre-wrap"></div>
+      <div style="font-size:.65rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.3rem">Your Translation</div>
+      <div id="wt-trans-preview" style="background:var(--border-light);border:1px solid var(--border);border-radius:8px;padding:.65rem 1rem;font-size:.8rem;line-height:1.6;color:var(--ink-mid);max-height:80px;overflow-y:auto;margin-bottom:1.2rem;white-space:pre-wrap"></div>
+      <div style="font-size:.65rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.4rem">Submission Code</div>
+      <input type="text" id="wt-code" class="code-input" placeholder="Enter code here" autocomplete="off" style="width:100%;display:block;margin-bottom:.5rem">
+      <div id="wt-code-err" class="code-err" style="display:none;margin-bottom:.6rem"></div>
+      <button class="cont-btn" onclick="submitWTWithCode()" style="width:100%">Submit for Grading →</button>
+      <button onclick="skipWTGrading()" class="skip-btn" style="width:100%;margin-top:.6rem;padding:.65rem;font-size:.78rem;text-align:center">Skip Grading (score 0)</button>
+    </div>
+  </div>
+</div>
+
+<!-- CET READING COMBINED SCREEN -->
+<div id="screen-cet-reading" class="screen">
+  <div class="rt-topbar">
+    <div class="hdr-brand">L<em>E</em>X<em>I</em>S</div>
+    <div class="rt-topbar-center">
+      <div class="cet-step-bar" id="cet-pips-reading" style="padding:0"></div>
+      <div style="display:flex;align-items:center;gap:.5rem">
+        <span style="font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted)">Reading</span>
+        <div class="mod-timer" id="rt-timer" style="font-size:1rem;font-weight:600;color:var(--ink-mid);letter-spacing:.04em;min-width:48px">20:00</div>
+      </div>
+    </div>
+    <button class="submit-mod-hdr" onclick="submitReading()">Submit All →</button>
+  </div>
+  <div class="rt-tabbar">
+    <button class="rt-tab rt-tab-active" id="rt-tab-passage" onclick="switchReadingTab('passage')">📚 Passage <span class="rt-badge" id="rtb-passage">0/5</span></button>
+    <button class="rt-tab" id="rt-tab-matching" onclick="switchReadingTab('matching')">🔍 Matching <span class="rt-badge" id="rtb-matching">0/5</span></button>
+    <button class="rt-tab" id="rt-tab-cloze" onclick="switchReadingTab('cloze')">📖 Cloze <span class="rt-badge" id="rtb-cloze">0/8</span></button>
+  </div>
+  <div class="rt-panel" id="rt-panel-passage">
+    <div class="rt-content-wrap">
+      <div class="q-badge" style="margin-bottom:1.2rem">📚 Reading · Passage (Questions 46–50)</div>
+      <div class="cloze-passage" id="rt-passage-text" style="margin-bottom:1.6rem;font-size:.875rem;line-height:1.9"></div>
+      <div id="rt-comp-questions"></div>
+    </div>
+  </div>
+  <div class="rt-panel" id="rt-panel-matching" style="display:none">
+    <div class="rt-content-wrap">
+      <div class="q-badge" style="margin-bottom:1rem">🔍 Reading · Paragraph Matching (Statements 36–40)</div>
+      <div style="font-size:.65rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-dark);margin-bottom:.9rem">Article — type the paragraph letter (A–H) that each statement refers to</div>
+      <div id="rt-matching-article" style="margin-bottom:1.5rem"></div>
+      <div id="rt-matching-questions"></div>
+    </div>
+  </div>
+  <div class="rt-panel" id="rt-panel-cloze" style="display:none">
+    <div class="rt-content-wrap">
+      <div class="q-badge" style="margin-bottom:1.2rem">📖 Reading · Cloze — Word Bank (Questions 26–33)</div>
+      <div class="word-bank">
+        <div class="word-bank-title">Word Bank — type the letter (A–L) into each blank · 12 words, 8 blanks</div>
+        <div class="word-bank-grid" id="rt-word-bank"></div>
+      </div>
+      <div class="cloze-passage" id="rt-cloze-passage"></div>
     </div>
   </div>
 </div>
