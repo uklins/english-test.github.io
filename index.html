@@ -1484,9 +1484,11 @@ const _CET = [
   {text:'Suppose your university library is updating its services. Write a response suggesting improvements that would make the library more useful for students. (120–180 words)', target:'Target: 120–180 words', sampleKey:'cet4', minWords:120, maxWords:180},
 ];
 
+const _UNIVERSITY_AI_WRITING = {text:"A university is considering closing its writing support center and replacing its individual tutoring appointments with an AI feedback service available to all students at any time. Students would still receive instruction and grades from their course instructors, but individual writing tutors would no longer be available. Do you support this proposal? Why or why not?", target:'Target: 120–180 words', sampleKey:'tutor'};
+
 const WRITING_POOL = {
-  toefl:  _ACAD,
-  ielts:  _ACAD,
+  toefl:  [..._ACAD, _UNIVERSITY_AI_WRITING],
+  ielts:  [..._ACAD, _UNIVERSITY_AI_WRITING],
   sat:    _ACAD,
   cet6:   _CET,
   cet4:   _CET,
