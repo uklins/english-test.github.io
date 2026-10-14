@@ -315,6 +315,19 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
 .wi-scale{font-size:.72rem;color:var(--ink-muted);margin-top:.55rem;padding:.4rem .7rem;background:var(--accent-light);border-radius:6px;text-align:center}
 .wi-rubric-row{display:flex;align-items:flex-start;gap:.5rem;font-size:.84rem;color:var(--ink-mid);line-height:1.55;padding:.2rem 0}
 .wi-rubric-dot{color:var(--accent);flex-shrink:0;margin-top:.15rem}
+/* WRITING PROMPT CHOICE */
+#screen-writing-choice{align-items:center;padding:2rem 1.25rem}
+.writing-choice-wrap{max-width:760px;width:100%}
+.writing-choice-list{display:grid;gap:.8rem;margin:1.4rem 0}
+.writing-choice-option{display:flex;align-items:flex-start;gap:.8rem;background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:1rem 1.2rem;cursor:pointer}
+.writing-choice-option:hover,.writing-choice-option:has(input:checked){border-color:var(--accent);background:var(--accent-light)}
+.writing-choice-option:focus-within{outline:2px solid var(--accent);outline-offset:3px}
+.writing-choice-option input{accent-color:var(--accent);margin-top:.3rem;flex-shrink:0}
+.writing-choice-number{display:block;font-size:.7rem;font-weight:600;color:var(--accent-dark);margin-bottom:.35rem}
+.writing-choice-text{display:block;font-size:.85rem;line-height:1.75;color:var(--ink-mid)}
+.writing-choice-actions{display:flex;gap:.75rem;align-items:center;flex-wrap:wrap}
+.writing-choice-actions .cont-btn{width:auto;flex:1}
+.writing-choice-actions .cont-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
 /* WRITING-ONLY / SKIP-WRITING */
 .start-btn-writing{width:100%;padding:.75rem 2rem;background:transparent;color:var(--ink);border:1.5px solid var(--border);border-radius:var(--r);font-family:'Sora',sans-serif;font-size:.83rem;font-weight:500;letter-spacing:.05em;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:.5rem;margin-top:.65rem}
 .start-btn-writing:hover{border-color:var(--accent);color:var(--accent)}
@@ -587,6 +600,20 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
   </div>
 </div>
 
+<!-- WRITING PROMPT CHOICE -->
+<div id="screen-writing-choice" class="screen">
+  <div class="writing-choice-wrap">
+    <div class="wi-title">Choose Your Writing Prompt</div>
+    <p class="intro-body">选择一道题目进行写作测试。准备好后点击开始，计时才会启动。</p>
+    <p class="intro-body" id="writing-choice-meta"></p>
+    <div class="writing-choice-list" id="writing-choice-list" role="radiogroup" aria-label="Writing prompts"></div>
+    <div class="writing-choice-actions">
+      <button class="skip-btn" onclick="showWritingIntro()">← Back</button>
+      <button class="cont-btn" id="writing-choice-start" onclick="beginSelectedWriting()" disabled>Begin Writing · 10:00 →</button>
+    </div>
+  </div>
+</div>
+
 <!-- WRITING INTRO -->
 <div id="screen-writing-intro" class="screen">
   <div style="flex:1;overflow-y:auto;display:flex;align-items:flex-start;justify-content:center;padding:2rem">
@@ -633,7 +660,7 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
       <div style="background:var(--accent-light);border:1px solid #F0C890;border-radius:8px;padding:.65rem .9rem;font-size:.78rem;color:var(--accent-dark);margin-top:.2rem;line-height:1.65">
         💡 <strong>Do not worry about the submission code during writing time — focus entirely on your essay.</strong> The code prompt will only appear when you choose to submit or when time runs out.
       </div>
-      <button class="cont-btn" onclick="startWritingSection()" style="width:100%;margin-top:1rem">Begin Writing Test →</button>
+      <button class="cont-btn" id="writing-section-start" onclick="startWritingSection()" style="width:100%;margin-top:1rem">Begin Writing Test →</button>
       <button class="skip-writing-link" onclick="confirmSkipWriting()">Skip Writing — I don't have a submission code</button>
     </div>
   </div>
@@ -1632,7 +1659,7 @@ function initState() {
     m1Correct:[0,0,0,0], m2Correct:[0,0,0,0],
     m2Hard:[false,false,false,false],
     writingText:'', writingScore:null,
-    writingPrompt:null,
+    writingPrompt:null, selectedWritingPromptIndex:null,
     writingOnly:false, writingSkipped:false,
     passageBlockMode:false, passageText:'',
     used:new Set(),
@@ -2046,6 +2073,7 @@ function showWritingIntro() {
   if (scaleFormula) scaleFormula.textContent = S.writingOnly ? 'AI score × 20 (%) = Your score' : 'AI score × 15 (%) = Module 2 percentage';
   scaleRows.forEach((el, i) => { el.textContent = pcts[i]; });
 
+  document.getElementById('writing-section-start').textContent = S.writingOnly ? 'Choose Writing Prompt →' : 'Begin Writing Test →';
   show('screen-writing-intro');
 }
 
@@ -2248,8 +2276,7 @@ function continueSection() {
 
 function startWritingSection() {
   if (S.writingOnly) {
-    S.module = 2;
-    showWritingTask();
+    showWritingPromptChoice();
     return;
   }
   loadModule();
@@ -2257,6 +2284,48 @@ function startWritingSection() {
   updatePips();
   renderModuleQ(0);
   startModTimer();
+}
+
+function showWritingPromptChoice() {
+  clearInterval(essayTimerInterval);
+  const pool = WRITING_POOL[S.exam] || WRITING_POOL.toefl;
+  const list = document.getElementById('writing-choice-list');
+  list.replaceChildren();
+  document.getElementById('writing-choice-meta').textContent = S.exam.toUpperCase() + ' · ' + pool.length + ' prompts · 10 minutes';
+  pool.forEach((prompt, index) => {
+    const option = document.createElement('label');
+    option.className = 'writing-choice-option';
+    const radio = document.createElement('input');
+    radio.type = 'radio';
+    radio.name = 'writing-prompt-choice';
+    radio.value = String(index);
+    radio.checked = S.selectedWritingPromptIndex === index;
+    radio.addEventListener('change', () => {
+      S.selectedWritingPromptIndex = index;
+      document.getElementById('writing-choice-start').disabled = false;
+    });
+    const copy = document.createElement('span');
+    const number = document.createElement('span');
+    number.className = 'writing-choice-number';
+    number.textContent = 'Question ' + (index + 1);
+    const text = document.createElement('span');
+    text.className = 'writing-choice-text';
+    text.textContent = prompt.text;
+    copy.append(number, text);
+    option.append(radio, copy);
+    list.append(option);
+  });
+  document.getElementById('writing-choice-start').disabled = !Number.isInteger(S.selectedWritingPromptIndex) || !pool[S.selectedWritingPromptIndex];
+  show('screen-writing-choice');
+}
+
+function beginSelectedWriting() {
+  if (!S.writingOnly) return;
+  const pool = WRITING_POOL[S.exam] || WRITING_POOL.toefl;
+  if (!Number.isInteger(S.selectedWritingPromptIndex) || !pool[S.selectedWritingPromptIndex]) return;
+  S.writingPrompt = pool[S.selectedWritingPromptIndex];
+  S.module = 2;
+  showWritingTask();
 }
 
 // ─── WRITING ─────────────────────────────────────────────────
@@ -2267,7 +2336,9 @@ function showWritingTask() {
   const areaEl = document.getElementById('essay-area');
   if (areaEl) { areaEl.disabled = false; areaEl.value = ''; }
   const pool = WRITING_POOL[S.exam] || WRITING_POOL.toefl;
-  S.writingPrompt = pool[Math.floor(Math.random() * pool.length)];
+  S.writingPrompt = S.writingOnly && Number.isInteger(S.selectedWritingPromptIndex) && pool[S.selectedWritingPromptIndex]
+    ? pool[S.selectedWritingPromptIndex]
+    : pool[Math.floor(Math.random() * pool.length)];
   document.getElementById('writing-prompt-text').textContent = S.writingPrompt.text;
   document.getElementById('writing-prompt-target').textContent = S.writingPrompt.target + ' · Limit: 200 words';
   document.getElementById('writing-wc').textContent = '0 words';
