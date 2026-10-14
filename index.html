@@ -487,14 +487,16 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
 <!-- ESSAY LOCKED MODAL -->
 <div id="modal-essay-locked" class="modal-overlay">
   <div class="modal-box" style="max-width:480px;width:100%">
-    <div style="font-size:1.6rem;text-align:center;margin-bottom:.4rem">🔒</div>
-    <div class="modal-title" style="text-align:center;margin-bottom:.5rem">Essay Locked</div>
+    <div id="essay-submit-icon" style="font-size:1.6rem;text-align:center;margin-bottom:.4rem">🔒</div>
+    <div id="essay-submit-title" class="modal-title" style="text-align:center;margin-bottom:.5rem">Essay Locked</div>
+    <div id="essay-confirm-timer" style="text-align:center;font-size:.82rem;color:var(--ink-mid);margin-bottom:.8rem;display:none" aria-live="off"></div>
     <div class="modal-body" id="locked-msg" style="margin-bottom:1rem"></div>
     <div style="font-size:.65rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.4rem">Your Essay</div>
     <div id="locked-essay-preview" style="background:var(--border-light);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;font-size:.82rem;line-height:1.7;color:var(--ink-mid);max-height:120px;overflow-y:auto;margin-bottom:1.2rem;white-space:pre-wrap"></div>
     <div style="font-size:.65rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.4rem">Submission Code</div>
     <input type="text" id="locked-code" class="code-input" placeholder="Enter code here" autocomplete="off" style="width:100%;display:block;margin-bottom:.5rem">
     <div id="locked-code-err" class="code-err" style="display:none;margin-bottom:.6rem"></div>
+    <button id="return-to-essay-btn" class="modal-cancel" onclick="returnToEssay()" style="width:100%;margin-bottom:.65rem;display:none">← Return to Essay</button>
     <button class="cont-btn" onclick="retryLockedEssay()" style="width:100%">Submit for Grading →</button>
     <button onclick="skipGrading()" class="skip-btn" style="width:100%;margin-top:.6rem;padding:.65rem;font-size:.78rem;text-align:center">Skip Grading</button>
   </div>
@@ -2369,6 +2371,7 @@ function updateEssayTimer() {
   const s = essaySecs % 60;
   el.textContent = m + ':' + String(s).padStart(2, '0');
   el.className = 'writing-timer' + (essaySecs <= 60 ? ' urgent' : '');
+  updateEssaySubmissionState();
 }
 
 function reduceTimer() {
@@ -2406,12 +2409,39 @@ function trySubmitEssay() {
   const rawText = document.getElementById('essay-area').value.trim();
   const wordLimit = S.exam === 'cet6' ? 130 : S.exam === 'cet4' ? 120 : 200;
   if (rawText.split(/\s+/).filter(Boolean).length > wordLimit || document.getElementById('essay-area').value.length > 1750) return;
-  clearInterval(essayTimerInterval);
-  const areaEl = document.getElementById('essay-area');
-  if (areaEl) areaEl.disabled = true;
+  if (essaySecs <= 0) {
+    if (isCET()) doSubmitCETEssay(true);
+    else doSubmitEssay(true);
+    return;
+  }
   S.writingText = rawText;
   if (isCET()) { showCETEssayLocked('submit'); return; }
   showEssayLocked('submit');
+}
+
+// Opening the confirmation keeps the writing session and its timer active.
+function updateEssaySubmissionState() {
+  const canReturn = essaySecs > 0 && !document.getElementById('essay-area').disabled;
+  document.getElementById('essay-submit-icon').textContent = canReturn ? '✏️' : '🔒';
+  document.getElementById('essay-submit-title').textContent = canReturn ? 'Submit Essay?' : 'Essay Locked';
+  document.getElementById('return-to-essay-btn').style.display = canReturn ? '' : 'none';
+  const timer = document.getElementById('essay-confirm-timer');
+  timer.style.display = canReturn ? '' : 'none';
+  timer.textContent = 'Time remaining: ' + Math.floor(essaySecs / 60) + ':' + String(essaySecs % 60).padStart(2, '0') + ' — the timer continues.';
+}
+
+function returnToEssay() {
+  if (essaySecs <= 0 || document.getElementById('essay-area').disabled) return;
+  document.getElementById('modal-essay-locked').style.display = 'none';
+  document.getElementById('essay-area').focus();
+}
+
+function finalizeEssaySubmission() {
+  clearInterval(essayTimerInterval);
+  const area = document.getElementById('essay-area');
+  S.writingText = area.value.trim();
+  area.disabled = true;
+  updateEssaySubmissionState();
 }
 
 function doSubmitEssay(auto) {
@@ -2425,7 +2455,7 @@ function doSubmitEssay(auto) {
 
 function showEssayLocked(reason, usedCode) {
   const msgs = {
-    submit:       'Your essay is ready. Enter your submission code below to send it for AI grading.',
+    submit:       'Enter your submission code to confirm submission for AI grading, or return to your essay. The timer continues until you confirm or time runs out.',
     timeout:      'Time\'s up — your essay is saved. Enter your submission code below to submit for grading.',
     invalid_code: 'Incorrect submission code. Check with your teacher and try again.',
     unavailable:  'Grading is temporarily unavailable. Enter your code below to try again.',
@@ -2437,6 +2467,7 @@ function showEssayLocked(reason, usedCode) {
   else codeInput.value = '';
   document.getElementById('locked-code-err').style.display = 'none';
   show('screen-writing-task');
+  updateEssaySubmissionState();
   document.getElementById('modal-essay-locked').style.display = 'flex';
 }
 
@@ -2450,6 +2481,7 @@ async function retryLockedEssay() {
     return;
   }
   errEl.style.display = 'none';
+  finalizeEssaySubmission();
   document.getElementById('modal-essay-locked').style.display = 'none';
   show('screen-writing-loading');
 
@@ -2901,7 +2933,7 @@ function showCETEssayLocked(reason) {
   S.cetEssayLockedReason = reason;
   const msgs = {
     timeout:      'Time\'s up — your essay is saved. Enter your submission code to send it for AI grading.',
-    submit:       'Your essay is ready. Enter your submission code to send it for AI grading.',
+    submit:       'Enter your submission code to confirm submission for AI grading, or return to your essay. The timer continues until you confirm or time runs out.',
     invalid_code: 'Incorrect submission code. Check with your teacher and try again.',
     unavailable:  'Grading is temporarily unavailable. Enter your code below to try again.',
   };
@@ -2909,6 +2941,7 @@ function showCETEssayLocked(reason) {
   document.getElementById('locked-essay-preview').textContent = S.writingText || '(no essay)';
   document.getElementById('locked-code').value = '';
   document.getElementById('locked-code-err').style.display = 'none';
+  updateEssaySubmissionState();
   document.getElementById('modal-essay-locked').style.display = 'flex';
 }
 
@@ -2917,6 +2950,7 @@ async function cetRetryEssay() {
   const errEl = document.getElementById('locked-code-err');
   if (!code) { errEl.textContent = 'Please enter your submission code.'; errEl.style.display = 'block'; return; }
   errEl.style.display = 'none';
+  finalizeEssaySubmission();
   document.getElementById('modal-essay-locked').style.display = 'none';
   show('screen-writing-loading');
   try {
