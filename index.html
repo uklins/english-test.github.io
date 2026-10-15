@@ -493,6 +493,27 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
 .discussion-post.discussion-professor{background:var(--accent-light);border-color:#F0C890}
 .discussion-author{font-weight:600;color:var(--accent-dark);font-size:.78rem;margin-bottom:.4rem}
 .writing-choice-selection{overflow-wrap:anywhere}
+
+/* Academic discussions stay alongside the response editor, not above it. */
+.writing-editor-label{display:block;font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.65rem}
+#screen-writing-task:has(.discussion-professor){height:100vh;height:100dvh;min-height:0;overflow:hidden}
+#screen-writing-task:has(.discussion-professor)>.test-hdr{flex-shrink:0;position:static}
+#screen-writing-task:has(.discussion-professor) .writing-body{min-height:0;overflow:hidden;padding:1.25rem;align-items:stretch}
+#screen-writing-task:has(.discussion-professor) .writing-wrap{max-width:1440px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1.5rem;min-height:0}
+#screen-writing-task:has(.discussion-professor) .writing-prompt-pane{min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable;padding-right:.4rem}
+#screen-writing-task:has(.discussion-professor) .writing-prompt-box{margin-bottom:0;padding:1rem 1.15rem}
+#screen-writing-task:has(.discussion-professor) .writing-editor-pane{display:flex;flex-direction:column;min-height:0;min-width:0}
+#screen-writing-task:has(.discussion-professor) .writing-meta-bar{flex-shrink:0}
+#screen-writing-task:has(.discussion-professor) #essay-area{flex:1;min-height:0;resize:none;overflow-y:auto}
+#screen-writing-task:has(.discussion-professor) .writing-editor-pane>div:last-child{flex-shrink:0}
+@media(max-width:650px){
+  #screen-writing-task:has(.discussion-professor) .writing-body{padding:.75rem}
+  #screen-writing-task:has(.discussion-professor) .writing-wrap{grid-template-columns:1fr;grid-template-rows:minmax(0,.8fr) minmax(0,1.2fr);gap:.75rem}
+  #screen-writing-task:has(.discussion-professor) .q-counter{display:none}
+  #screen-writing-task:has(.discussion-professor) .writing-editor-label{margin-bottom:.2rem}
+  #screen-writing-task:has(.discussion-professor) .writing-meta-bar{margin-bottom:.3rem}
+}
+
 </style>
 </head>
 <body>
@@ -708,6 +729,23 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
     <div class="writing-intro-layout">
       <div class="writing-intro-details" tabindex="0" aria-label="Essay scoring details">
       <div class="wi-section">
+        <div class="wi-sec-title">Structure &amp; Scoring</div>
+        <div class="wi-task-block" id="wi-mcq-row">
+          <div class="wi-task-name">Module 1 — Grammar &amp; Editing MCQ</div>
+          <div class="wi-task-time">2 minutes, 30 seconds</div>
+          <div class="wi-task-meta">5 questions · equally weighted</div>
+          <div class="wi-task-pct">25% of total Writing Section score</div>
+        </div>
+        <div class="wi-task-block">
+          <div class="wi-task-name">Module 2 — Essay Task</div>
+          <div class="wi-task-time">10 minutes</div>
+          <div class="wi-task-meta">1 question · AI-graded</div>
+          <div class="wi-task-pct" id="wi-essay-pct">75% of total Writing Section score</div>
+        </div>
+      </div>
+
+
+      <div class="wi-section">
         <div class="wi-sec-title" id="wi-scale-title">Module 2 Scoring Scale</div>
         <div style="font-size:.82rem;color:var(--ink);margin-bottom:.35rem">The essay is scored on a 0–5 scale.</div>
         <div style="font-size:.72rem;color:var(--ink-muted);margin-bottom:.5rem" id="wi-scale-formula">AI score × 15 (%) = Module 2 percentage</div>
@@ -724,22 +762,6 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
       </div>
       <aside class="writing-intro-side" aria-label="Writing instructions and next step">
         <div class="writing-intro-side-info">
-      <div class="wi-section">
-        <div class="wi-sec-title">Structure &amp; Scoring</div>
-        <div class="wi-task-block" id="wi-mcq-row">
-          <div class="wi-task-name">Module 1 — Grammar &amp; Editing MCQ</div>
-          <div class="wi-task-time">2 minutes, 30 seconds</div>
-          <div class="wi-task-meta">5 questions · equally weighted</div>
-          <div class="wi-task-pct">25% of total Writing Section score</div>
-        </div>
-        <div class="wi-task-block">
-          <div class="wi-task-name">Module 2 — Essay Task</div>
-          <div class="wi-task-time">10 minutes</div>
-          <div class="wi-task-meta">1 question · AI-graded</div>
-          <div class="wi-task-pct" id="wi-essay-pct">75% of total Writing Section score</div>
-        </div>
-      </div>
-
       <div class="wi-section">
         <div class="wi-sec-title">Submission</div>
         <div class="wi-rubric-row"><span class="wi-rubric-dot">●</span><span>A <strong>submission code</strong> is required. You will be asked for it when you click <strong>Submit Essay →</strong> or when the <strong>timer expires</strong> — no need to think about the code while writing.</span></div>
@@ -854,12 +876,16 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
   </header>
   <div class="writing-body">
     <div class="writing-wrap">
+      <div class="writing-prompt-pane" tabindex="0" aria-label="Writing discussion">
       <div class="writing-prompt-box">
         <div class="writing-prompt-label">Essay Prompt</div>
         <div class="writing-prompt-text" id="writing-prompt-text"></div>
         <div style="margin-top:.7rem;font-size:.8rem;color:var(--ink-mid);line-height:1.65;border-top:1px solid var(--border-light);padding-top:.65rem">Express your opinion. Support your opinion with logical reasoning — examples are optional. Write clearly with appropriate grammar and punctuation.</div>
         <div class="writing-prompt-target" id="writing-prompt-target"></div>
       </div>
+      </div>
+      <div class="writing-editor-pane">
+      <label for="essay-area" class="writing-editor-label">Your Response</label>
       <div class="writing-meta-bar">
         <span class="writing-timer" id="writing-timer">10:00</span>
         <span class="writing-wc" id="writing-wc">0 words</span>
@@ -868,6 +894,7 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
       <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
         <button class="submit-essay-btn" onclick="trySubmitEssay()">Submit Essay →</button>
         <button class="skip-btn" id="reduce-timer-btn" onclick="reduceTimer()" style="display:none;padding:.85rem 1.2rem;font-size:.8rem">−1 Minute</button>
+      </div>
       </div>
     </div>
   </div>
@@ -2583,7 +2610,7 @@ function getWritingChoiceLabels(pool) {
   topics.forEach(topic => counts.set(topic, (counts.get(topic) || 0) + 1));
   return topics.map(topic => {
     seen.set(topic, (seen.get(topic) || 0) + 1);
-    return counts.get(topic) > 1 ? '[' + topic + '] ' + seen.get(topic) : topic;
+    return counts.get(topic) > 1 ? topic + ' ' + seen.get(topic) : topic;
   });
 }
 
