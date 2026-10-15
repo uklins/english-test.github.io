@@ -485,6 +485,14 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
   .writing-choice-reminder{display:none}
 }
 
+
+.writing-choice-topic{font-weight:600;font-size:.9rem;color:var(--ink)}
+.writing-prompt-text.academic-discussion{font-family:'Sora',sans-serif;font-size:.86rem;line-height:1.75}
+.discussion-instructions{color:var(--ink-mid);font-size:.8rem;margin-bottom:1rem}
+.discussion-post{padding:1rem 1.1rem;margin-top:.8rem;border:1px solid var(--border);border-radius:var(--r);background:var(--bg)}
+.discussion-post.discussion-professor{background:var(--accent-light);border-color:#F0C890}
+.discussion-author{font-weight:600;color:var(--accent-dark);font-size:.78rem;margin-bottom:.4rem}
+.writing-choice-selection{overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -1599,14 +1607,182 @@ const _CET = [
 
 // Matched themes, independent exam-specific wording. SAT and CET remain unchanged.
 const _TOEFL_WRITING = [
-  {"topicId":"school-ai-tutoring","text":"In our discussion of technology in education, consider a high school that has replaced its writing tutoring center with an AI feedback tool. The school argues that students can now receive detailed feedback at any time rather than wait for an appointment. Some students value this convenience, while others believe that a human tutor's understanding of their individual progress cannot be replaced. Was replacing the tutoring center a good decision? Explain your view.","target":"Target: 120–180 words","sampleKey":"tutor"},
-  {"topicId":"four-day-school-week","text":"A school district is deciding whether to replace its five-day school week with four longer school days. Administrators believe the change would reduce student burnout and help students focus. Some parents and teachers expect students to return to school more energized, but others worry about losing daily practice in subjects such as mathematics and languages. In your view, should the district adopt the four-day week? Support your answer with reasons.","target":"Target: 120–180 words","sampleKey":"fourday"},
-  {"topicId":"school-smartphone-ban","text":"Today we are discussing how schools should manage students' use of technology. One city school district requires students to keep their smartphones in locked pouches from arrival until dismissal. Supporters say this reduces distractions and improves academic performance. Opponents point out that phones can be useful for learning and for contacting family members in an emergency. Do you support this all-day smartphone ban? Why or why not?","target":"Target: 120–180 words","sampleKey":"phone"},
-  {"topicId":"tax-funded-university-tuition","text":"Imagine that your state is considering making public university tuition free for all residents through a modest increase in income tax. Supporters argue that student debt prevents qualified young people from pursuing higher education. Critics question whether the tax increase is fair to people who have already repaid their loans or decided not to attend university. Should the state adopt this proposal? Explain your position.","target":"Target: 120–180 words","sampleKey":"tuition"},
-  {"topicId":"five-day-office-return","text":"As part of our discussion of workplace policy, consider a large company that has ended hybrid working and now requires everyone to work in the office five days a week. Management says in-person collaboration has weakened and new employees need more direct contact with colleagues. Many employees argue that their productivity has remained high and that commuting harms their quality of life. Was the company right to require a full-time return to the office? Explain your reasoning.","target":"Target: 120–180 words","sampleKey":"office"},
-  {"topicId":"under-16-social-media-ban","text":"Governments are debating whether children under 16 should be prohibited from creating social media accounts. Supporters believe a ban would protect young people's mental health, citing concerns about anxiety and depression. Critics argue that the restriction would be difficult to enforce and might push children towards less regulated platforms. Do you think this ban is a good policy? Give reasons for your view.","target":"Target: 120–180 words","sampleKey":"socialban"},
-  {"topicId":"graduate-first-employer","text":"Our class is considering the advice universities should give students about their first jobs. Some career advisers recommend large, established companies because structured training, mentorship and clearer career paths can provide a strong professional foundation. Others favour start-ups, where graduates may take on meaningful responsibilities sooner and develop more quickly. If you were choosing your first job after university, which type of company would you prefer, and why?","target":"Target: 120–180 words","sampleKey":"startup"},
-  {"topicId":"university-ai-tutoring","text":"A university is considering closing its writing support center and replacing individual tutoring appointments with an AI feedback service available to all students at any time. Course instructors would continue to teach and grade students, but individual writing tutors would no longer be available. Supporters value the wider access to feedback, while opponents question whether AI can replace personalized guidance from a tutor. Do you support this proposal? Explain why or why not.","target":"Target: 120–180 words","sampleKey":"tutor"}
+  {
+    "topicId": "school-ai-tutoring",
+    "text": "Write a response that contributes to the class discussion. State and support your opinion, engage with the ideas presented, and develop your answer in your own words.\n\nProfessor Dr. Morgan\nOur class is examining how schools can use technology to support learning. A high school has replaced its writing tutoring center with an AI feedback tool that students can access at any time. Students no longer need to book appointments, but individual writing tutors are no longer available. Do you think replacing the tutoring center was a good decision? Why or why not?\n\nMaya\nI think the school made the right decision. Feedback is most useful while a student is actually working on a draft, not several days later when a tutor has an opening. With an AI tool, students can revise their writing immediately and ask for feedback again, even if they are studying late at night.\n\nDaniel\nI would keep the human tutors. A tutor who has worked with a student over time can recognize recurring difficulties and adjust the guidance accordingly. Instant comments may be convenient, but they do not necessarily help a student understand why the same writing problems keep appearing.",
+    "discussion": {
+      "professor": {
+        "name": "Dr. Morgan",
+        "text": "Our class is examining how schools can use technology to support learning. A high school has replaced its writing tutoring center with an AI feedback tool that students can access at any time. Students no longer need to book appointments, but individual writing tutors are no longer available. Do you think replacing the tutoring center was a good decision? Why or why not?"
+      },
+      "students": [
+        {
+          "name": "Maya",
+          "text": "I think the school made the right decision. Feedback is most useful while a student is actually working on a draft, not several days later when a tutor has an opening. With an AI tool, students can revise their writing immediately and ask for feedback again, even if they are studying late at night."
+        },
+        {
+          "name": "Daniel",
+          "text": "I would keep the human tutors. A tutor who has worked with a student over time can recognize recurring difficulties and adjust the guidance accordingly. Instant comments may be convenient, but they do not necessarily help a student understand why the same writing problems keep appearing."
+        }
+      ]
+    },
+    "target": "Target: 120–180 words",
+    "sampleKey": "tutor"
+  },
+  {
+    "topicId": "four-day-school-week",
+    "text": "Write a response that contributes to the class discussion. State and support your opinion, engage with the ideas presented, and develop your answer in your own words.\n\nProfessor Dr. Patel\nThis week we are discussing how the organization of the school day affects learning. A school district is considering moving from five school days per week to four longer days. Administrators hope that the extra day away from school would reduce burnout and improve students' concentration. Should the district make this change? Explain your view.\n\nElena\nI support a four-day week because exhausted students are unlikely to learn much just by spending another day at school. An extra day to rest and manage their responsibilities could help them arrive better prepared. Longer lessons might also give teachers enough time to finish activities without constantly interrupting them.\n\nJordan\nI am not convinced that longer days would make up for fewer days of instruction. In mathematics and language learning, students benefit from practicing regularly and receiving feedback before they forget what they learned. Trying to fit more into an already long day could also make it harder for them to concentrate.",
+    "discussion": {
+      "professor": {
+        "name": "Dr. Patel",
+        "text": "This week we are discussing how the organization of the school day affects learning. A school district is considering moving from five school days per week to four longer days. Administrators hope that the extra day away from school would reduce burnout and improve students' concentration. Should the district make this change? Explain your view."
+      },
+      "students": [
+        {
+          "name": "Elena",
+          "text": "I support a four-day week because exhausted students are unlikely to learn much just by spending another day at school. An extra day to rest and manage their responsibilities could help them arrive better prepared. Longer lessons might also give teachers enough time to finish activities without constantly interrupting them."
+        },
+        {
+          "name": "Jordan",
+          "text": "I am not convinced that longer days would make up for fewer days of instruction. In mathematics and language learning, students benefit from practicing regularly and receiving feedback before they forget what they learned. Trying to fit more into an already long day could also make it harder for them to concentrate."
+        }
+      ]
+    },
+    "target": "Target: 120–180 words",
+    "sampleKey": "fourday"
+  },
+  {
+    "topicId": "school-smartphone-ban",
+    "text": "Write a response that contributes to the class discussion. State and support your opinion, engage with the ideas presented, and develop your answer in your own words.\n\nProfessor Dr. Chen\nWe have been discussing schools' responsibilities when students use personal technology. One district requires students to keep their smartphones in locked pouches from arrival until dismissal, not only during lessons. The aim is to reduce distraction and improve academic performance. Do you support this all-day policy? Why or why not?\n\nSofia\nI think the policy is too restrictive. Phones can be useful when students need to look up information or complete a classroom activity. They also allow students to contact family members in an emergency. Schools should teach students when phone use is appropriate instead of removing the choice for the entire day.\n\nMarcus\nI support the ban. Even students who intend to use their phones responsibly can be distracted by notifications or by what their friends are doing online. Having the same rule throughout the school day would remove that pressure and make it easier for everyone to focus on schoolwork.",
+    "discussion": {
+      "professor": {
+        "name": "Dr. Chen",
+        "text": "We have been discussing schools' responsibilities when students use personal technology. One district requires students to keep their smartphones in locked pouches from arrival until dismissal, not only during lessons. The aim is to reduce distraction and improve academic performance. Do you support this all-day policy? Why or why not?"
+      },
+      "students": [
+        {
+          "name": "Sofia",
+          "text": "I think the policy is too restrictive. Phones can be useful when students need to look up information or complete a classroom activity. They also allow students to contact family members in an emergency. Schools should teach students when phone use is appropriate instead of removing the choice for the entire day."
+        },
+        {
+          "name": "Marcus",
+          "text": "I support the ban. Even students who intend to use their phones responsibly can be distracted by notifications or by what their friends are doing online. Having the same rule throughout the school day would remove that pressure and make it easier for everyone to focus on schoolwork."
+        }
+      ]
+    },
+    "target": "Target: 120–180 words",
+    "sampleKey": "phone"
+  },
+  {
+    "topicId": "tax-funded-university-tuition",
+    "text": "Write a response that contributes to the class discussion. State and support your opinion, engage with the ideas presented, and develop your answer in your own words.\n\nProfessor Dr. Williams\nIn our public policy class, we are considering a proposal to make tuition at public universities free for all state residents. The state would pay for the policy through a modest increase in income tax. The aim is to prevent student debt from discouraging qualified young people from attending university. Should the state adopt this proposal? Give reasons for your answer.\n\nAisha\nI support the proposal. Students should not have to rule out university simply because they are afraid of taking on debt. Removing tuition would give qualified students more freedom to choose an education that suits their abilities, rather than limiting their plans to what their families can afford.\n\nLeo\nI am concerned about the way the proposal would be funded. People who already repaid their student loans would now help pay for someone else's tuition as well. Residents who chose not to attend university would also pay more tax. I do not think universal free tuition is necessarily the fairest use of their money.",
+    "discussion": {
+      "professor": {
+        "name": "Dr. Williams",
+        "text": "In our public policy class, we are considering a proposal to make tuition at public universities free for all state residents. The state would pay for the policy through a modest increase in income tax. The aim is to prevent student debt from discouraging qualified young people from attending university. Should the state adopt this proposal? Give reasons for your answer."
+      },
+      "students": [
+        {
+          "name": "Aisha",
+          "text": "I support the proposal. Students should not have to rule out university simply because they are afraid of taking on debt. Removing tuition would give qualified students more freedom to choose an education that suits their abilities, rather than limiting their plans to what their families can afford."
+        },
+        {
+          "name": "Leo",
+          "text": "I am concerned about the way the proposal would be funded. People who already repaid their student loans would now help pay for someone else's tuition as well. Residents who chose not to attend university would also pay more tax. I do not think universal free tuition is necessarily the fairest use of their money."
+        }
+      ]
+    },
+    "target": "Target: 120–180 words",
+    "sampleKey": "tuition"
+  },
+  {
+    "topicId": "five-day-office-return",
+    "text": "Write a response that contributes to the class discussion. State and support your opinion, engage with the ideas presented, and develop your answer in your own words.\n\nProfessor Dr. Garcia\nOur course is looking at how companies organize work. A large company has ended its hybrid arrangement and now requires all employees to work in the office five days a week. Management says collaboration has weakened and newer employees need more direct contact with colleagues. Was the company right to require a full-time return to the office? Explain your position.\n\nBen\nI understand the company's decision. Experienced employees may work well independently, but new staff often learn by observing colleagues and asking quick questions. When everyone is in the office regularly, those conversations happen more naturally. That can improve both training and the way a team solves problems together.\n\nPriya\nI disagree with making everyone return full-time. Many employees maintained their productivity while working remotely, so being at a desk in the office does not automatically mean better work. Daily commuting also takes time away from rest and family. The company should consider those costs before taking away flexibility.",
+    "discussion": {
+      "professor": {
+        "name": "Dr. Garcia",
+        "text": "Our course is looking at how companies organize work. A large company has ended its hybrid arrangement and now requires all employees to work in the office five days a week. Management says collaboration has weakened and newer employees need more direct contact with colleagues. Was the company right to require a full-time return to the office? Explain your position."
+      },
+      "students": [
+        {
+          "name": "Ben",
+          "text": "I understand the company's decision. Experienced employees may work well independently, but new staff often learn by observing colleagues and asking quick questions. When everyone is in the office regularly, those conversations happen more naturally. That can improve both training and the way a team solves problems together."
+        },
+        {
+          "name": "Priya",
+          "text": "I disagree with making everyone return full-time. Many employees maintained their productivity while working remotely, so being at a desk in the office does not automatically mean better work. Daily commuting also takes time away from rest and family. The company should consider those costs before taking away flexibility."
+        }
+      ]
+    },
+    "target": "Target: 120–180 words",
+    "sampleKey": "office"
+  },
+  {
+    "topicId": "under-16-social-media-ban",
+    "text": "Write a response that contributes to the class discussion. State and support your opinion, engage with the ideas presented, and develop your answer in your own words.\n\nProfessor Dr. Thompson\nToday we are considering policies intended to protect young people online. A government has banned children under 16 from creating social media accounts because lawmakers are concerned about anxiety and depression among young users. Do you think this age-based ban is a good policy? Why or why not?\n\nNoah\nI support the ban. Younger teenagers may find it difficult to step away from constant comparisons, negative comments and pressure to stay online. Setting an age limit would give them more time to develop before entering that environment. Protecting their mental health is a reasonable reason to restrict access.\n\nIsabel\nI doubt that a ban would solve the problem. Children can lie about their age, and some may move to less regulated platforms where they face greater risks. A policy that is hard to enforce could make adults feel that children are protected without actually making their online experiences safer.",
+    "discussion": {
+      "professor": {
+        "name": "Dr. Thompson",
+        "text": "Today we are considering policies intended to protect young people online. A government has banned children under 16 from creating social media accounts because lawmakers are concerned about anxiety and depression among young users. Do you think this age-based ban is a good policy? Why or why not?"
+      },
+      "students": [
+        {
+          "name": "Noah",
+          "text": "I support the ban. Younger teenagers may find it difficult to step away from constant comparisons, negative comments and pressure to stay online. Setting an age limit would give them more time to develop before entering that environment. Protecting their mental health is a reasonable reason to restrict access."
+        },
+        {
+          "name": "Isabel",
+          "text": "I doubt that a ban would solve the problem. Children can lie about their age, and some may move to less regulated platforms where they face greater risks. A policy that is hard to enforce could make adults feel that children are protected without actually making their online experiences safer."
+        }
+      ]
+    },
+    "target": "Target: 120–180 words",
+    "sampleKey": "socialban"
+  },
+  {
+    "topicId": "graduate-first-employer",
+    "text": "Write a response that contributes to the class discussion. State and support your opinion, engage with the ideas presented, and develop your answer in your own words.\n\nProfessor Dr. Evans\nWe are discussing how the choice of a first employer can affect a graduate's professional development. Large, established companies often offer structured training and clearer career paths, while start-ups may give new employees a broader range of responsibilities. If you were choosing your first job after university, which type of company would you prefer, and why?\n\nGrace\nI would choose a large company. At the beginning of my career, I would want experienced colleagues to show me how to do the job properly and give me feedback. A clear training program would help me build reliable skills before I was expected to make important decisions independently.\n\nOmar\nI would prefer a start-up because I would probably have the chance to contribute to several parts of the business. Taking responsibility for meaningful work early on could help me discover my strengths. I would find that more valuable than following a narrow role while waiting for a formal promotion.",
+    "discussion": {
+      "professor": {
+        "name": "Dr. Evans",
+        "text": "We are discussing how the choice of a first employer can affect a graduate's professional development. Large, established companies often offer structured training and clearer career paths, while start-ups may give new employees a broader range of responsibilities. If you were choosing your first job after university, which type of company would you prefer, and why?"
+      },
+      "students": [
+        {
+          "name": "Grace",
+          "text": "I would choose a large company. At the beginning of my career, I would want experienced colleagues to show me how to do the job properly and give me feedback. A clear training program would help me build reliable skills before I was expected to make important decisions independently."
+        },
+        {
+          "name": "Omar",
+          "text": "I would prefer a start-up because I would probably have the chance to contribute to several parts of the business. Taking responsibility for meaningful work early on could help me discover my strengths. I would find that more valuable than following a narrow role while waiting for a formal promotion."
+        }
+      ]
+    },
+    "target": "Target: 120–180 words",
+    "sampleKey": "startup"
+  },
+  {
+    "topicId": "university-ai-tutoring",
+    "text": "Write a response that contributes to the class discussion. State and support your opinion, engage with the ideas presented, and develop your answer in your own words.\n\nProfessor Dr. Rivera\nOur class is discussing how universities should provide academic support. A university is considering closing its writing support center and replacing individual tutoring appointments with an AI feedback service available to all students at any time. Course instructors would still teach and grade students, but individual writing tutors would no longer be available. Do you support this proposal? Why or why not?\n\nHannah\nI would not support closing the center. A tutor can ask a student to explain an argument and discover that the real difficulty is with the reasoning, not the wording. That conversation can change how the student approaches writing. Receiving comments from a tool is not necessarily a substitute for working through a problem with a person.\n\nEthan\nI support the proposal because individual appointments cannot always meet students' needs. Some students have scheduling conflicts, and others need help when the center is closed. An AI service would give all students access to feedback whenever they are writing, while their instructors would still be responsible for teaching and assessment.",
+    "discussion": {
+      "professor": {
+        "name": "Dr. Rivera",
+        "text": "Our class is discussing how universities should provide academic support. A university is considering closing its writing support center and replacing individual tutoring appointments with an AI feedback service available to all students at any time. Course instructors would still teach and grade students, but individual writing tutors would no longer be available. Do you support this proposal? Why or why not?"
+      },
+      "students": [
+        {
+          "name": "Hannah",
+          "text": "I would not support closing the center. A tutor can ask a student to explain an argument and discover that the real difficulty is with the reasoning, not the wording. That conversation can change how the student approaches writing. Receiving comments from a tool is not necessarily a substitute for working through a problem with a person."
+        },
+        {
+          "name": "Ethan",
+          "text": "I support the proposal because individual appointments cannot always meet students' needs. Some students have scheduling conflicts, and others need help when the center is closed. An AI service would give all students access to feedback whenever they are writing, while their instructors would still be responsible for teaching and assessment."
+        }
+      ]
+    },
+    "target": "Target: 120–180 words",
+    "sampleKey": "tutor"
+  }
 ];
 
 const _IELTS_WRITING = [
@@ -2393,12 +2569,57 @@ function startWritingSection() {
   startModTimer();
 }
 
+const WRITING_TOPIC_LABELS = {
+  tutor: 'AI Writing Support', fourday: 'Four-Day School Week', phone: 'Smartphones at School',
+  tuition: 'Free University Tuition', office: 'Returning to the Office',
+  socialban: 'Social Media Age Limits', startup: 'Choosing a First Employer',
+  cet4: 'Campus Life', cet6: 'Campus Life',
+};
+
+function getWritingChoiceLabels(pool) {
+  const topics = pool.map(prompt => prompt.topic || WRITING_TOPIC_LABELS[prompt.sampleKey] || 'Writing Practice');
+  const counts = new Map();
+  const seen = new Map();
+  topics.forEach(topic => counts.set(topic, (counts.get(topic) || 0) + 1));
+  return topics.map(topic => {
+    seen.set(topic, (seen.get(topic) || 0) + 1);
+    return counts.get(topic) > 1 ? '[' + topic + '] ' + seen.get(topic) : topic;
+  });
+}
+
+function renderWritingPrompt(prompt) {
+  const root = document.getElementById('writing-prompt-text');
+  root.replaceChildren();
+  root.classList.toggle('academic-discussion', !!prompt.discussion);
+  if (!prompt.discussion) { root.textContent = prompt.text; return; }
+  const intro = document.createElement('p');
+  intro.className = 'discussion-instructions';
+  intro.textContent = "Write a response that contributes to the class discussion. State and support your opinion, engage with the ideas presented, and develop your answer in your own words.";
+  root.append(intro);
+  const participants = [
+    { ...prompt.discussion.professor, role: 'Professor' },
+    ...prompt.discussion.students.map(student => ({ ...student, role: 'Student' })),
+  ];
+  participants.forEach(person => {
+    const post = document.createElement('section');
+    post.className = 'discussion-post' + (person.role === 'Professor' ? ' discussion-professor' : '');
+    const name = document.createElement('div');
+    name.className = 'discussion-author';
+    name.textContent = person.role + ' · ' + person.name;
+    const message = document.createElement('p');
+    message.textContent = person.text;
+    post.append(name, message);
+    root.append(post);
+  });
+}
+
 function showWritingPromptChoice() {
   clearInterval(essayTimerInterval);
   const pool = WRITING_POOL[S.exam] || WRITING_POOL.toefl;
   const list = document.getElementById('writing-choice-list');
   list.replaceChildren();
   document.getElementById('writing-choice-meta').textContent = S.exam.toUpperCase() + ' · ' + pool.length + ' prompts · 10 minutes';
+  const labels = getWritingChoiceLabels(pool);
   pool.forEach((prompt, index) => {
     const option = document.createElement('label');
     option.className = 'writing-choice-option';
@@ -2412,13 +2633,10 @@ function showWritingPromptChoice() {
       updateWritingChoiceSummary();
     });
     const copy = document.createElement('span');
-    const number = document.createElement('span');
-    number.className = 'writing-choice-number';
-    number.textContent = 'Question ' + (index + 1);
     const text = document.createElement('span');
-    text.className = 'writing-choice-text';
-    text.textContent = prompt.text;
-    copy.append(number, text);
+    text.className = 'writing-choice-text writing-choice-topic';
+    text.textContent = labels[index];
+    copy.append(text);
     option.append(radio, copy);
     list.append(option);
   });
@@ -2432,7 +2650,7 @@ function updateWritingChoiceSummary() {
   const pool = WRITING_POOL[S.exam] || WRITING_POOL.toefl;
   const selected = Number.isInteger(S.selectedWritingPromptIndex) ? pool[S.selectedWritingPromptIndex] : null;
   document.getElementById('writing-choice-exam').textContent = (S.exam || 'toefl').toUpperCase();
-  document.getElementById('writing-choice-selection').textContent = selected ? 'Question ' + (S.selectedWritingPromptIndex + 1) + ' selected' : 'No question selected';
+  document.getElementById('writing-choice-selection').textContent = selected ? getWritingChoiceLabels(pool)[S.selectedWritingPromptIndex] : 'No question selected';
   document.getElementById('writing-choice-target').textContent = selected ? selected.target.replace(/^Target:\s*/, '') : 'Select a question';
   document.getElementById('writing-choice-start').disabled = !selected;
 }
@@ -2457,7 +2675,7 @@ function showWritingTask() {
   S.writingPrompt = S.writingOnly && Number.isInteger(S.selectedWritingPromptIndex) && pool[S.selectedWritingPromptIndex]
     ? pool[S.selectedWritingPromptIndex]
     : pool[Math.floor(Math.random() * pool.length)];
-  document.getElementById('writing-prompt-text').textContent = S.writingPrompt.text;
+  renderWritingPrompt(S.writingPrompt);
   document.getElementById('writing-prompt-target').textContent = S.writingPrompt.target + ' · Limit: 200 words';
   document.getElementById('writing-wc').textContent = '0 words';
   const submitBtnInit = document.querySelector('.submit-essay-btn');
