@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LEXIS · Essay Checker</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#F5EFE6;color:#1C1810;font-family:Arial,Helvetica,sans-serif;line-height:1.65}header{padding:1rem 2rem;background:#FFFDF9;border-bottom:1px solid #E0D6C8;display:flex;align-items:center;justify-content:space-between;gap:1rem}header a{color:#4A4035}main{max-width:1200px;margin:auto;padding:2rem 1.5rem 4rem}h1,h2,p{margin-top:0}h1{margin-bottom:.35rem}h2{font-size:1.2rem}a{color:#8A4400}.muted{color:#74695E;font-size:.85rem}.panels{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:1.2rem}.card{padding:1.4rem;background:#FFFDF9;border:1px solid #E0D6C8;border-radius:12px}fieldset{border:0;padding:0;margin:0;min-width:0}label{display:block;font-size:.85rem;font-weight:600;margin-bottom:.4rem}textarea,input,select,button{font:inherit}textarea,input,select{width:100%;border:1px solid #CDBFAE;border-radius:8px;padding:.75rem;background:#FFFDF9;color:#1C1810}textarea{resize:vertical;line-height:1.7}textarea:focus,input:focus,select:focus{outline:2px solid #B85C00;outline-offset:2px}#custom-prompt{min-height:300px}#custom-essay{min-height:360px}.field{margin-bottom:1rem}.meta{display:flex;justify-content:space-between;gap:1rem;font-size:.8rem;color:#74695E;margin:.4rem 0 1rem}.actions{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-top:1.2rem}button{background:#1C1810;color:#FFFDF9;border:0;border-radius:8px;padding:.85rem 1.4rem;font-weight:600;cursor:pointer}button:hover{background:#B85C00}button:disabled{opacity:.5;cursor:wait}.error{color:#8B1F1F;background:#FBE8E8;padding:1rem;border-radius:8px;margin-top:1rem}.result{margin-top:1.5rem}.score{font-size:2rem;font-weight:700;font-variant-numeric:tabular-nums}.criteria{display:flex;gap:.6rem;flex-wrap:wrap;margin:1rem 0}.criterion{padding:.35rem .65rem;border:1px solid #E0D6C8;border-radius:6px;font-size:.85rem}.snapshot{white-space:pre-wrap;overflow-wrap:anywhere;max-height:260px;overflow:auto;font-size:.9rem}#feedback{white-space:pre-wrap;overflow-wrap:anywhere}[hidden]{display:none!important}@media(max-width:700px){header{padding:1rem}main{padding:1.25rem .85rem 3rem}.panels{grid-template-columns:1fr}.card{padding:1rem}#custom-prompt{min-height:200px}#custom-essay{min-height:300px}}
+</style>
+</head>
+<body>
+<header><strong>LEXIS · Essay Checker</strong><a href="../">← Back to Assessment</a></header>
+<main>
+<h1>Check your own essay</h1>
+<p class="muted">Your prompt. Your essay. No timer. Receive AI feedback using the LEXIS 0–5 rubric—not an official TOEFL score or IELTS band.</p>
+<form id="checker-form">
+<fieldset id="checker-fields">
+<div class="panels">
+<section class="card">
+<div class="field"><label for="exam">Writing context</label><select id="exam"><option value="toefl">TOEFL · Academic Discussion</option><option value="ielts">IELTS · Task 2</option></select></div>
+<label for="custom-prompt">Essay prompt</label>
+<p class="muted" id="prompt-help">Paste the complete question. For TOEFL, include the professor’s question and both student responses.</p>
+<textarea id="custom-prompt" required maxlength="12000" aria-describedby="prompt-help" placeholder="Paste your essay question here…"></textarea>
+</section>
+<section class="card">
+<label for="custom-essay">Your essay</label>
+<textarea id="custom-essay" required maxlength="30000" placeholder="Paste or write your essay here…"></textarea>
+<div class="meta"><span id="word-count">0 words</span><span>Untimed · editable after grading</span></div>
+<label for="submission-code">Submission code</label>
+<input id="submission-code" type="password" required maxlength="256" autocomplete="off" placeholder="Enter your submission code">
+<p class="muted">Your prompt and essay are sent to the grading service and its AI provider. Your code is not saved by this page. Avoid including private information.</p>
+</section>
+</div>
+<div class="actions"><button id="check-button" type="submit">Check Essay →</button><span id="status" role="status" aria-live="polite"></span></div>
+</fieldset>
+</form>
+<div id="error" class="error" role="alert" hidden></div>
+<section id="result" class="card result" aria-labelledby="result-title" tabindex="-1" hidden>
+<h2 id="result-title">Your AI feedback</h2>
+<div class="score" id="score"></div>
+<p class="muted" id="result-meta"></p>
+<div class="criteria" id="criteria"></div>
+<p id="feedback"></p>
+<details><summary>View submitted prompt and essay</summary><h3>Prompt</h3><div id="submitted-prompt" class="snapshot"></div><h3>Essay</h3><div id="submitted-essay" class="snapshot"></div></details>
+<p class="muted">AI feedback can be mistaken. You can edit the fields above and submit another revision. Both writing contexts currently use the same LEXIS rubric.</p>
+</section>
+</main>
+<script>
+const GRADER_URL = 'https://lexis-grader.mhtcgyj7st.workers.dev/';
+let grading = false;
+const byId = id => document.getElementById(id);
+function countWords(text) { return text.trim() ? text.trim().split(/\s+/).length : 0; }
+byId('custom-essay').addEventListener('input', () => {
+  const n = countWords(byId('custom-essay').value);
+  byId('word-count').textContent = n + (n === 1 ? ' word' : ' words');
+});
+function showError(message) {
+  byId('error').textContent = message;
+  byId('error').hidden = false;
+}
+function renderResult(result, submitted) {
+  byId('score').textContent = result.score + ' / 5';
+  byId('result-meta').textContent = 'LEXIS Writing Score · ' + submitted.exam.toUpperCase() + ' context · ' + countWords(submitted.essay) + ' words';
+  byId('feedback').textContent = result.feedback;
+  const criteria = byId('criteria');
+  criteria.replaceChildren();
+  for (const [key, label] of [['position_pass','Position'],['support_pass','Support'],['language_pass','Language'],['sophistication','Sophistication']]) {
+    if (typeof result[key] !== 'boolean') continue;
+    const item = document.createElement('span');
+    item.className = 'criterion';
+    item.textContent = label + ': ' + (result[key] ? (key === 'sophistication' ? 'Present' : 'Pass') : (key === 'sophistication' ? 'Not demonstrated' : 'Not met'));
+    criteria.append(item);
+  }
+  byId('submitted-prompt').textContent = submitted.prompt;
+  byId('submitted-essay').textContent = submitted.essay;
+  byId('result').hidden = false;
+  byId('result').focus();
+}
+async function checkEssay(event) {
+  event.preventDefault();
+  if (grading || !byId('checker-form').reportValidity()) return;
+  const submitted = {
+    essay: byId('custom-essay').value.trim(),
+    prompt: byId('custom-prompt').value.trim(),
+    code: byId('submission-code').value.trim(),
+    exam: byId('exam').value,
+  };
+  byId('error').hidden = true;
+  if (!submitted.prompt || !submitted.essay || !submitted.code) {
+    showError('Please enter a prompt, essay and submission code.'); return;
+  }
+  grading = true;
+  byId('checker-fields').disabled = true;
+  byId('status').textContent = 'Grading your essay…';
+  byId('result').hidden = true;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 90000);
+  try {
+    const response = await fetch(GRADER_URL, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(submitted), signal: controller.signal,
+    });
+    if (response.status === 403) throw new Error('Incorrect submission code. Check your code and try again.');
+    if (response.status === 429) throw new Error('The grading service is busy. Please wait before trying again.');
+    if (!response.ok) throw new Error('Grading is unavailable right now. Your text is still here; please try again later.');
+    const result = await response.json();
+    if (!Number.isInteger(result.score) || result.score < 0 || result.score > 5 || typeof result.feedback !== 'string') throw new Error('The grading service returned an invalid result. Please try again.');
+    renderResult(result, submitted);
+    byId('status').textContent = 'Grading complete. Edit your essay above to check a revision.';
+  } catch (error) {
+    showError(error.name === 'AbortError' ? 'Grading timed out. Your text is still here; you can try again.' : (error instanceof TypeError ? 'Could not connect to the grading service. Please check your connection and try again.' : error.message));
+    byId('status').textContent = 'Not graded. Your text has been preserved.';
+  } finally {
+    clearTimeout(timeout);
+    grading = false;
+    byId('checker-fields').disabled = false;
+  }
+}
+byId('checker-form').addEventListener('submit', checkEssay);
+</script>
+</body>
+</html>
