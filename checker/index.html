@@ -83,13 +83,14 @@ summary{font-size:.83rem;font-weight:500;color:var(--ink-mid);cursor:pointer}
  .criteria{grid-template-columns:1fr}
  .actions button{width:100%}
 }
+.limit-exceeded{color:var(--error);font-weight:600}
 </style>
 </head>
 <body>
 <header><div class="hdr-brand">L<em>E</em>X<em>I</em>S<span class="hdr-section">Essay Checker</span></div><a class="back-link" href="../">← Back to Assessment</a></header>
 <main>
 <div class="checker-heading"><div class="q-badge">Writing · Essay Checker</div><h1>Check Your Essay</h1>
-<p class="muted">Your prompt. Your essay. No timer. Receive AI feedback using the LEXIS 0–5 rubric—not an official TOEFL score or IELTS band.</p></div>
+</div>
 <form id="checker-form">
 <fieldset id="checker-fields">
 <div class="panels">
@@ -97,14 +98,16 @@ summary{font-size:.83rem;font-weight:500;color:var(--ink-mid);cursor:pointer}
 <div class="field"><label for="exam">Writing context</label><select id="exam"><option value="toefl">TOEFL · Academic Discussion</option><option value="ielts">IELTS · Task 2</option></select></div>
 <label for="custom-prompt">Essay prompt</label>
 <p class="muted" id="prompt-help">Paste the complete question. For TOEFL, include the professor’s question and both student responses.</p>
-<textarea id="custom-prompt" required maxlength="12000" aria-describedby="prompt-help" placeholder="Paste your essay question here…"></textarea>
+<textarea id="custom-prompt" required maxlength="1750" aria-describedby="prompt-help" placeholder="Paste your essay question here…"></textarea>
+<div class="meta" id="prompt-limit-status"><span id="prompt-word-count">0 / 200 words</span><span id="prompt-char-count">0 / 1,750 characters</span></div>
 </section>
 <section class="card">
 <label for="custom-essay">Your essay</label>
-<textarea id="custom-essay" required maxlength="30000" placeholder="Paste or write your essay here…"></textarea>
-<div class="meta"><span id="word-count">0 words</span><span>Untimed · editable after grading</span></div>
+<textarea id="custom-essay" required maxlength="1750" placeholder="Paste or write your essay here…"></textarea>
+<div class="meta" id="essay-limit-status"><span id="word-count">0 / 200 words</span><span id="essay-char-count">0 / 1,750 characters</span></div>
 <label for="submission-code">Submission code</label>
-<input id="submission-code" type="password" required maxlength="256" autocomplete="off" placeholder="Enter your submission code">
+<input id="submission-code" type="password" required maxlength="20" autocomplete="off" placeholder="Enter your submission code" aria-describedby="code-limit-help">
+<p class="muted" id="code-limit-help">Maximum 20 characters.</p>
 <p class="muted">Your prompt and essay are sent to the grading service and its AI provider. Your code is not saved by this page. Avoid including private information.</p>
 </section>
 </div>
@@ -127,10 +130,30 @@ const GRADER_URL = 'https://lexis-grader.mhtcgyj7st.workers.dev/';
 let grading = false;
 const byId = id => document.getElementById(id);
 function countWords(text) { return text.trim() ? text.trim().split(/\s+/).length : 0; }
-byId('custom-essay').addEventListener('input', () => {
-  const n = countWords(byId('custom-essay').value);
-  byId('word-count').textContent = n + (n === 1 ? ' word' : ' words');
-});
+const CHECKER_WORD_LIMIT = 200;
+const CHECKER_CHAR_LIMIT = 1750;
+const CODE_CHAR_LIMIT = 20;
+function checkerLimitError() {
+  if (countWords(byId('custom-prompt').value) > CHECKER_WORD_LIMIT || byId('custom-prompt').value.length > CHECKER_CHAR_LIMIT) return 'The prompt must not exceed 200 words or 1,750 characters.';
+  if (countWords(byId('custom-essay').value) > CHECKER_WORD_LIMIT || byId('custom-essay').value.length > CHECKER_CHAR_LIMIT) return 'The essay must not exceed 200 words or 1,750 characters.';
+  if (byId('submission-code').value.length > CODE_CHAR_LIMIT) return 'The submission code must not exceed 20 characters.';
+  return '';
+}
+function updateCheckerLimits() {
+  for (const [id, wcId, ccId, statusId] of [
+    ['custom-prompt', 'prompt-word-count', 'prompt-char-count', 'prompt-limit-status'],
+    ['custom-essay', 'word-count', 'essay-char-count', 'essay-limit-status'],
+  ]) {
+    const text = byId(id).value;
+    const words = countWords(text);
+    byId(wcId).textContent = words + ' / 200 words';
+    byId(ccId).textContent = text.length.toLocaleString('en-US') + ' / 1,750 characters';
+    byId(statusId).classList.toggle('limit-exceeded', words > CHECKER_WORD_LIMIT || text.length > CHECKER_CHAR_LIMIT);
+  }
+  byId('check-button').disabled = grading || !!checkerLimitError();
+}
+['custom-prompt', 'custom-essay', 'submission-code'].forEach(id => byId(id).addEventListener('input', updateCheckerLimits));
+updateCheckerLimits();
 function showError(message) {
   byId('error').textContent = message;
   byId('error').hidden = false;
@@ -155,7 +178,10 @@ function renderResult(result, submitted) {
 }
 async function checkEssay(event) {
   event.preventDefault();
-  if (grading || !byId('checker-form').reportValidity()) return;
+  if (grading) return;
+  const limitError = checkerLimitError();
+  if (limitError) { showError(limitError); updateCheckerLimits(); return; }
+  if (!byId('checker-form').reportValidity()) return;
   const submitted = {
     essay: byId('custom-essay').value.trim(),
     prompt: byId('custom-prompt').value.trim(),
@@ -191,6 +217,7 @@ async function checkEssay(event) {
     clearTimeout(timeout);
     grading = false;
     byId('checker-fields').disabled = false;
+    updateCheckerLimits();
   }
 }
 byId('checker-form').addEventListener('submit', checkEssay);
