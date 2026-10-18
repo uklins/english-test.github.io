@@ -120,7 +120,7 @@ summary{font-size:.83rem;font-weight:500;color:var(--ink-mid);cursor:pointer}
 <div class="score-card"><div class="score" id="score"></div>
 <p class="muted" id="result-meta"></p>
 <div class="criteria" id="criteria"></div></div>
-<h3>AI Feedback</h3><p id="feedback" class="feedback-box"></p>
+<h3 id="feedback-title">AI Feedback</h3><p id="feedback" class="feedback-box"></p>
 <details><summary>View submitted prompt and essay</summary><h3>Prompt</h3><div id="submitted-prompt" class="snapshot"></div><h3>Essay</h3><div id="submitted-essay" class="snapshot"></div></details>
 <p class="muted">AI feedback can be mistaken. You can edit the fields above and submit another revision. Both writing contexts currently use the same LEXIS rubric.</p>
 </section>
@@ -159,13 +159,18 @@ function showError(message) {
   byId('error').hidden = false;
 }
 function renderResult(result, submitted) {
-  byId('score').textContent = result.score + ' / 5';
+  const offTopic = result.topic_alignment === 'off_topic';
+  byId('score').textContent = offTopic ? 'Off topic' : result.score + ' / 5';
+  byId('result-meta').hidden = offTopic;
+  byId('criteria').hidden = offTopic;
+  byId('feedback-title').hidden = offTopic;
+  byId('feedback').hidden = offTopic;
   byId('result-meta').textContent = 'LEXIS Writing Score · ' + submitted.exam.toUpperCase() + ' context · ' + countWords(submitted.essay) + ' words';
   byId('feedback').textContent = result.feedback;
   const criteria = byId('criteria');
   criteria.replaceChildren();
   for (const [key, label] of [['position_pass','Position'],['support_pass','Support'],['language_pass','Language'],['sophistication','Sophistication']]) {
-    if (typeof result[key] !== 'boolean') continue;
+    if (offTopic || typeof result[key] !== 'boolean') continue;
     const item = document.createElement('span');
     item.className = 'criterion';
     item.textContent = label + ': ' + (result[key] ? (key === 'sophistication' ? 'Present' : 'Pass') : (key === 'sophistication' ? 'Not demonstrated' : 'Not met'));
@@ -207,7 +212,9 @@ async function checkEssay(event) {
     if (response.status === 429) throw new Error('The grading service is busy. Please wait before trying again.');
     if (!response.ok) throw new Error('Grading is unavailable right now. Your text is still here; please try again later.');
     const result = await response.json();
-    if (!Number.isInteger(result.score) || result.score < 0 || result.score > 5 || typeof result.feedback !== 'string') throw new Error('The grading service returned an invalid result. Please try again.');
+    if (!result || !['on_topic', 'partially_on_topic', 'off_topic'].includes(result.topic_alignment)) throw new Error('Could not verify topic relevance. Please try again.');
+    if (result.topic_alignment !== 'off_topic' && (!Number.isInteger(result.score) || result.score < 0 || result.score > 5)) throw new Error('The grading service returned an invalid result. Please try again.');
+    if (typeof result.feedback !== 'string') throw new Error('The grading service returned an invalid result. Please try again.');
     renderResult(result, submitted);
     byId('status').textContent = 'Grading complete. Edit your essay above to check a revision.';
   } catch (error) {
