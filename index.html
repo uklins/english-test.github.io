@@ -891,7 +891,7 @@ mark.mh{background:#F0C060;color:var(--ink);border-radius:3px;padding:0 2px}
         <span class="writing-timer" id="writing-timer">10:00</span>
         <span class="writing-wc" id="writing-wc">0 words</span>
       </div>
-      <textarea id="essay-area" maxlength="1750" placeholder="Begin writing your response here…" oninput="updateWC()"></textarea>
+      <textarea id="essay-area" maxlength="2250" placeholder="Begin writing your response here…" oninput="updateWC()"></textarea>
       <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
         <button class="submit-essay-btn" onclick="trySubmitEssay()">Submit Essay →</button>
         <button class="skip-btn" id="reduce-timer-btn" onclick="reduceTimer()" style="display:none;padding:.85rem 1.2rem;font-size:.8rem">−1 Minute</button>
@@ -2704,7 +2704,7 @@ function showWritingTask() {
     ? pool[S.selectedWritingPromptIndex]
     : pool[Math.floor(Math.random() * pool.length)];
   renderWritingPrompt(S.writingPrompt);
-  document.getElementById('writing-prompt-target').textContent = S.writingPrompt.target + ' · Limit: 200 words';
+  document.getElementById('writing-prompt-target').textContent = S.writingPrompt.target + ' · Limit: 250 words';
   document.getElementById('writing-wc').textContent = '0 words';
   const submitBtnInit = document.querySelector('.submit-essay-btn');
   if (submitBtnInit) { submitBtnInit.disabled = false; submitBtnInit.classList.remove('over-limit'); }
@@ -2746,9 +2746,9 @@ function updateWC() {
   const text = document.getElementById('essay-area').value;
   const wc = text.trim() ? text.trim().split(/\s+/).length : 0;
   const cc = text.length;
-  const wordLimit = S.exam === 'cet6' ? 130 : S.exam === 'cet4' ? 120 : 200;
+  const wordLimit = S.exam === 'cet6' ? 130 : S.exam === 'cet4' ? 120 : 250;
   const overWords = wc > wordLimit;
-  const overChars = cc > 1750;
+  const overChars = cc > 2250;
   const over = overWords || overChars;
   const wcEl = document.getElementById('writing-wc');
   if (overChars) {
@@ -2769,8 +2769,8 @@ function updateWC() {
 
 function trySubmitEssay() {
   const rawText = document.getElementById('essay-area').value.trim();
-  const wordLimit = S.exam === 'cet6' ? 130 : S.exam === 'cet4' ? 120 : 200;
-  if (rawText.split(/\s+/).filter(Boolean).length > wordLimit || document.getElementById('essay-area').value.length > 1750) return;
+  const wordLimit = S.exam === 'cet6' ? 130 : S.exam === 'cet4' ? 120 : 250;
+  if (rawText.split(/\s+/).filter(Boolean).length > wordLimit || document.getElementById('essay-area').value.length > 2250) return;
   if (essaySecs <= 0) {
     if (isCET()) doSubmitCETEssay(true);
     else doSubmitEssay(true);
