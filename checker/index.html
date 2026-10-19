@@ -84,6 +84,7 @@ summary{font-size:.83rem;font-weight:500;color:var(--ink-mid);cursor:pointer}
  .actions button{width:100%}
 }
 .limit-exceeded{color:var(--error);font-weight:600}
+.score-position{font-family:'Sora',sans-serif;font-size:.85rem;font-weight:500;color:#F0C060;margin-top:.65rem;letter-spacing:.03em}
 </style>
 </head>
 <body>
@@ -118,6 +119,7 @@ summary{font-size:.83rem;font-weight:500;color:var(--ink-mid);cursor:pointer}
 <section id="result" class="result" aria-labelledby="result-title" tabindex="-1" hidden>
 <h2 id="result-title">Your AI feedback</h2>
 <div class="score-card"><div class="score" id="score"></div>
+<div id="score-position" class="score-position" hidden></div>
 <p class="muted" id="result-meta"></p>
 <div class="criteria" id="criteria"></div></div>
 <h3 id="feedback-title">AI Feedback</h3><p id="feedback" class="feedback-box"></p>
@@ -161,6 +163,12 @@ function showError(message) {
 function renderResult(result, submitted) {
   const offTopic = result.topic_alignment === 'off_topic';
   byId('score').textContent = offTopic ? 'Off topic' : result.score + ' / 5';
+  const position = byId('score-position');
+  const validPosition = ['low', 'typical', 'high'].includes(result.band_position);
+  position.hidden = offTopic || !validPosition;
+  position.textContent = !validPosition ? '' : result.band_position === 'typical'
+    ? 'Typical' : (result.band_position === 'high' ? 'High ' : 'Low ') + result.score;
+  position.title = typeof result.band_reason === 'string' ? result.band_reason : '';
   byId('result-meta').hidden = offTopic;
   byId('criteria').hidden = offTopic;
   byId('feedback-title').hidden = offTopic;
