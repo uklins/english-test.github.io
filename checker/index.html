@@ -85,6 +85,13 @@ summary{font-size:.83rem;font-weight:500;color:var(--ink-mid);cursor:pointer}
 }
 .limit-exceeded{color:var(--error);font-weight:600}
 .score-position{font-family:'Sora',sans-serif;font-size:.85rem;font-weight:500;color:#F0C060;margin-top:.65rem;letter-spacing:.03em}
+
+.sample-grading{padding:1.1rem 1.3rem;margin-bottom:1.3rem;background:var(--card);border:1px solid var(--border);border-radius:var(--r)}
+.sample-grading h2{font-size:1.4rem;margin-bottom:.3rem}
+.sample-grading-actions{display:flex;gap:.65rem;flex-wrap:wrap;margin-top:.8rem}
+.sample-grading-button{background:transparent;color:var(--ink-mid);border:1.5px solid var(--border);font-size:.78rem;padding:.65rem 1rem}
+.sample-grading-button:hover:not(:disabled){background:var(--accent-light);border-color:var(--accent);color:var(--accent-dark)}
+@media(max-width:700px){.sample-grading{padding:1rem}.sample-grading-actions{flex-direction:column}.sample-grading-button{text-align:left}}
 </style>
 </head>
 <body>
@@ -94,6 +101,13 @@ summary{font-size:.83rem;font-weight:500;color:var(--ink-mid);cursor:pointer}
 </div>
 <form id="checker-form">
 <fieldset id="checker-fields">
+<section class="sample-grading" aria-labelledby="sample-grading-title">
+<div><h2 id="sample-grading-title">Sample Grading</h2><p class="muted">Load a sample prompt and essay. Enter your submission code, then click Check Essay.</p></div>
+<div class="sample-grading-actions">
+<button type="button" class="sample-grading-button" onclick="loadGradingSample('A')">Sample A · AI Writing Support</button>
+<button type="button" class="sample-grading-button" onclick="loadGradingSample('B')">Sample B · First Job Choice</button>
+</div>
+</section>
 <div class="panels">
 <section class="card prompt-card">
 <div class="field"><label for="exam">Writing context</label><select id="exam"><option value="toefl">TOEFL · Academic Discussion</option><option value="ielts">IELTS · Task 2</option></select></div>
@@ -156,6 +170,30 @@ function updateCheckerLimits() {
 }
 ['custom-prompt', 'custom-essay', 'submission-code'].forEach(id => byId(id).addEventListener('input', updateCheckerLimits));
 updateCheckerLimits();
+const GRADING_SAMPLES = {
+  "A": {
+    "prompt": "Professor Martin\nOur university is considering closing its writing support center and replacing its individual tutoring appointments with an AI feedback service available to all students at any time. Students would still receive instruction and grades from their course instructors, but individual writing tutors would no longer be available. Do you support this proposal? Why or why not?\n\nEmily\nI support the proposal. Writing center appointments are limited, and students often need help late at night. An AI service would allow more students to get feedback when they actually need it.\n\nDaniel\nI disagree. A tutor can ask students what they are trying to communicate and help them work through their ideas. Receiving automated suggestions is not necessarily the same as learning how to write.",
+    "essay": "I do not agree close the center. There is a problem not only AI answer is right, but student asking is right. When I writing an essay before, I ask a program make my example stronger. It give more details and the example become long. But my teacher said this example should not in this paragraph. So the program helped the question, not helped what I really need.\nFor a student who already know his problem, AI can useful very much. Other students is not this situation. They think grammar is the problem because grammar can see, and the reason cannot see easy. If center closed, these students have many feedback but nobody find what they don’t ask. University can let AI first and tutor after. It will fewer time for tutor because simple mistake already finish. This is why keep some person is necessary, not because computer always wrong."
+  },
+  "B": {
+    "prompt": "Professor: Some people argue that new university graduates benefit most from working at start-up companies, where they can take on responsibility quickly and experience excitement. Others believe large, established companies are better because they offer stability and structured training. What is your view? Should new graduates choose start-ups or large established companies for their first job?\n\nAndrew: I think start-ups are the better choice. New graduates can take on meaningful responsibilities right away, and the fast-paced environment is exciting and motivating.\n\nKelly: I disagree. Large companies provide clearer rules, better training, and more stability, which help new graduates develop professional habits and avoid costly mistakes.",
+    "essay": "Andrew’s argument may appear credible at first glance, yet upon closer examination, it appears some limitations. Specifically, it is true that start-up companies would offer excitement for new graduates; however, new graduates lack social experience, so they may have trouble in these small companies when dealing with some important decisions. If some crucial decisions are made improper, the small companies may be detrimentally influenced, even destroyed, rendering the new graduates lose hope and affect their health mentally and psychologically.\nAccordingly, Kelly’s perspective resonates with me, and in addition to her reason, there is another crucial aspect that warrants inclusion: working in large and established companies can help new university graduates to gain more working method and strategies. Precisely, thanks to the established and complete rules in big companies, the new graduates can learn a lot of working method and strategies which they probably cannot learn in their universities; thus, they can be more professional in settling various problems that their own companies may occur, making them more compatible to established their own business."
+  }
+};
+function loadGradingSample(key) {
+  if (grading || !GRADING_SAMPLES[key]) return;
+  const sample = GRADING_SAMPLES[key];
+  byId('exam').value = 'toefl';
+  byId('custom-prompt').value = sample.prompt;
+  byId('custom-essay').value = sample.essay;
+  byId('submission-code').value = '';
+  byId('error').hidden = true;
+  byId('result').hidden = true;
+  byId('status').textContent = 'Sample ' + key + ' loaded. Enter your submission code to grade it.';
+  updateCheckerLimits();
+  byId('submission-code').focus();
+}
+
 function showError(message) {
   byId('error').textContent = message;
   byId('error').hidden = false;
