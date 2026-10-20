@@ -214,8 +214,8 @@ function renderResult(result, submitted) {
   byId('criteria').hidden = offTopic || disputed;
   byId('feedback-title').hidden = offTopic;
   byId('feedback').hidden = offTopic;
-  byId('feedback-title').textContent = result.representative_feedback ? 'Representative Feedback' : disputed ? 'Relevance Review' : 'AI Feedback';
-  byId('result-meta').textContent = 'LEXIS Writing Score · ' + submitted.exam.toUpperCase() + ' context · ' + countWords(submitted.essay) + ' words' + (result.runs_completed === 5 ? ' · 5 evaluations' : '');
+  byId('feedback-title').textContent = disputed ? 'Relevance Review' : 'AI Feedback';
+  byId('result-meta').textContent = 'LEXIS Writing Score · ' + submitted.exam.toUpperCase() + ' context · ' + countWords(submitted.essay) + ' words';
   byId('feedback').textContent = result.feedback;
   const criteria = byId('criteria');
   criteria.replaceChildren();
@@ -249,7 +249,7 @@ async function checkEssay(event) {
   }
   grading = true;
   byId('checker-fields').disabled = true;
-  byId('status').textContent = 'Grading your essay with five independent evaluations…';
+  byId('status').textContent = 'Grading your essay…';
   byId('result').hidden = true;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 100000);
@@ -262,13 +262,12 @@ async function checkEssay(event) {
     if (response.status === 429) throw new Error('The grading service is busy. Please wait before trying again.');
     if (!response.ok) {
       const failure = await response.json().catch(() => ({}));
-      if (failure.error === 'evaluation_incomplete') throw new Error('Evaluation incomplete: ' + failure.completed_runs + ' of 5 runs succeeded. No final score was assigned. Your text is still here.');
+      if (failure.error === 'Grading timed out') throw new Error('Grading timed out. Your text is still here; you can try again.');
       throw new Error('Grading is unavailable right now. Your text is still here; please try again later.');
     }
     const result = await response.json();
     const disputed = result && result.status === 'relevance_disputed';
     if (!result || (!disputed && !['on_topic', 'partially_on_topic', 'off_topic'].includes(result.topic_alignment))) throw new Error('Could not verify topic relevance. Please try again.');
-    if (result.aggregation === 'five_run_holistic' && result.runs_completed !== 5) throw new Error('Five valid evaluations are required before displaying a final result.');
     if (!disputed && result.topic_alignment !== 'off_topic' && (!Number.isInteger(result.score) || result.score < 0 || result.score > 5)) throw new Error('The grading service returned an invalid result. Please try again.');
     if (typeof result.feedback !== 'string') throw new Error('The grading service returned an invalid result. Please try again.');
     renderResult(result, submitted);
